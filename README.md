@@ -1,5 +1,5 @@
-# ProgramacaoCientifica
-Mestrado - Programação Cientifica
+# Programação Cientifica
+>> Mestrado - Programação Cientifica
 
 Atividade 1 
   - Fila estática (queue.h)
