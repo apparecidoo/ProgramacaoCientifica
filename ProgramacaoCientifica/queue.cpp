@@ -32,6 +32,7 @@ int Queue::deQueue()
 		return value;
 	}
 	else {
+		cout << "" << endl;
 		return -1;
 	}
 }
