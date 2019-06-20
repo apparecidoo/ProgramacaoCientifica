@@ -20,6 +20,8 @@ void Queue::queue(int value)
 	if (!isFull()) {
 		values[last_position] = value;
 		addQueue();
+
+		cout << endl << "Enqueue number: " << value << endl;
 	}
 	else {
 		cout << "**The queue is full." << endl;
@@ -31,6 +33,8 @@ int Queue::deQueue()
 	if (!isEmpty()) {
 		int value = values[first_position];
 		subQueue();
+		
+		cout << endl << "Dequeue number: " << value << endl;
 
 		return value;
 	}
@@ -43,16 +47,20 @@ int Queue::deQueue()
 
 void Queue::print()
 {
-	cout << "Values from Queue: " << endl;
+	cout << endl << "Values from Queue: " << endl;
+	cout << "[begin] - ";
+
 	int i = first_position;
 	while (i != last_position)
 	{
 		i = i % SIZE;
 
-		cout << values[i] << endl;
+		cout << values[i] << " | ";
 
 		i++;
 	}
+
+	cout << " - [end]";
 }
 
 void Queue::printNext()

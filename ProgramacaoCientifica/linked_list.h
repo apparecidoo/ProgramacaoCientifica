@@ -15,8 +15,9 @@ public:
 	void addLast(int value); // insert a value in the end of list
 	int removeFirst(); // remove the last value in the beginning of list
 	int removeLast(); // remove the last value in the end of list
-	void print(); // print all values from list
+	virtual void print(); // print all values from list
 	int getNumberNodes(); // return the number of nodes in the list
+	Node* const getRoot(); // get root node
 	virtual void test(); // method to test
 
 private:

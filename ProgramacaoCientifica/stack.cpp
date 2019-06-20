@@ -16,6 +16,8 @@ void Stack::push(int value)
 	if (!isFull()) {
 		values[top] = value;
 		top++;
+
+		cout << endl << "Push number: " << value << endl;
 	}
 	else {
 		cout << "**The stack is full." << endl;
@@ -28,6 +30,8 @@ int Stack::pop()
 		int value = values[top];
 		top--;
 
+		cout << endl << "Pop number: " << value << endl;
+
 		return value;
 	}
 	else {
@@ -38,12 +42,15 @@ int Stack::pop()
 
 void Stack::print()
 {
-	cout << "Values from Stack: " << endl;
+	cout << endl << "Values from Stack: " << endl;
+	cout << "[down] - ";
 
 	for (int i = 0; i < top; i++)
 	{
 		cout << values[i] << " | ";
 	}
+
+	cout << " - [top]";
 
 	cout << endl;
 }

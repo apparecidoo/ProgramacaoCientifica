@@ -14,6 +14,7 @@ public:
 	void push(int value); // insert a value in the stack
 	int pop(); // remove the last value in the stack
 	void test() override;
+	void print() override;
 };
 
 #endif

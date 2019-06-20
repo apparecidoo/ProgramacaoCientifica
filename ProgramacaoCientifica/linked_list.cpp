@@ -113,7 +113,7 @@ int LinkedList::removeLast()
 
 void LinkedList::print()
 {
-	cout << "Values from List: " << endl;
+	cout << endl << "Values from List: " << endl;
 	Node* node = root_node;
 
 	while (node != NULL)
@@ -128,6 +128,11 @@ void LinkedList::print()
 int LinkedList::getNumberNodes()
 {
 	return this->number_nodes;
+}
+
+Node * const LinkedList::getRoot()
+{
+	return root_node;
 }
 
 void LinkedList::test()
