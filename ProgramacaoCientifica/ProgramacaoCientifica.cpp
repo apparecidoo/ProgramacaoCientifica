@@ -9,11 +9,16 @@
 
 int main()
 {
-	/*Stack stack = Stack();
-	stack.test();*/
+	//Stack().test();
 
-	Queue queue = Queue();
-	queue.test();
+	//Queue().test();
+
+	//LinkedList().test();
+
+	//DynamicStack().test();
+
+	DynamicQueue().test();
+
 
 	system("pause");
 	return 0;

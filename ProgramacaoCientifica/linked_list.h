@@ -17,7 +17,7 @@ public:
 	int removeLast(); // remove the last value in the end of list
 	void print(); // print all values from list
 	int getNumberNodes(); // return the number of nodes in the list
-	virtual void test() = 0; // method to test
+	virtual void test(); // method to test
 
 private:
 	Node* root_node; // first position of queue to be retired

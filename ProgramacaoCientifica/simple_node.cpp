@@ -3,6 +3,6 @@
 
 Node::Node(int value)
 {
-	value = value;
+	this->value = value;
 	next_node = NULL;
 }

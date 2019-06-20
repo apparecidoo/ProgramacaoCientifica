@@ -29,20 +29,31 @@ void LinkedList::addFirst(int value)
 			root_node->next_node = node;
 		}
 	}
+	else {
+		cout << "**The list is full." << endl;
+	}
 }
 
 void LinkedList::addLast(int value)
 {
-	if (!isFull()) {
+	if (isEmpty()) {
+		root_node = createNode(value);
+	}
+	else {
+		if (!isFull()) {
 
-		Node* node = root_node;
+			Node* node = root_node;
 
-		while (node->next_node != NULL)
-		{
-			node = node->next_node;
+			while (node->next_node != NULL)
+			{
+				node = node->next_node;
+			}
+
+			node->next_node = createNode(value);
 		}
-
-		node->next_node = createNode(value);
+		else {
+			cout << "**The list is full." << endl;
+		}
 	}
 }
 
@@ -60,6 +71,9 @@ int LinkedList::removeFirst()
 
 		deleteNode(node);
 	}
+	else {
+		cout << "**The list is empty." << endl;
+	}
 
 	return value;
 }
@@ -71,15 +85,27 @@ int LinkedList::removeLast()
 	if (!isEmpty()) {
 
 		Node* node = root_node;
+		Node* previous_node = NULL;
 
 		while (node->next_node != NULL)
 		{
+			if(node->next_node != NULL)
+				previous_node = node; // if was the root, then we need to maintain NULL on previous_node
+
 			node = node->next_node;
 		}
+
+		if (previous_node != NULL)
+			previous_node->next_node = NULL; // remove any node
+		else
+			root_node = NULL; // if was the root, remove root_node setting NULL
 
 		value = node->value;
 
 		deleteNode(node);
+	}
+	else {
+		cout << "**The list is empty." << endl;
 	}
 
 	return value;
@@ -92,9 +118,11 @@ void LinkedList::print()
 
 	while (node != NULL)
 	{
-		cout << "Value: " << node->value << endl;
+		cout << node->value << " | ";
 		node = node->next_node;
 	}
+
+	cout << endl;
 }
 
 int LinkedList::getNumberNodes()
@@ -104,6 +132,22 @@ int LinkedList::getNumberNodes()
 
 void LinkedList::test()
 {
+	this->addFirst(10);
+	this->addLast(2);
+	this->removeLast();
+	this->print();
+	this->addFirst(11);
+	this->removeFirst();
+	this->addLast(3);
+	this->print();
+	this->addFirst(12);
+	this->removeFirst();
+	this->addFirst(13);
+	this->print();
+	this->removeFirst();
+	this->removeFirst();
+	this->removeFirst();
+	this->removeFirst();
 }
 
 bool LinkedList::isEmpty()
@@ -121,6 +165,8 @@ bool LinkedList::isFull()
 			cout << "***Error: Cannot allocate memory, Node is null." << endl;
 			return true;
 		}
+
+		this->deleteNode(node);
 
 		return false;
 	}

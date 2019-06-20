@@ -21,6 +21,9 @@ void Queue::queue(int value)
 		values[last_position] = value;
 		addQueue();
 	}
+	else {
+		cout << "**The queue is full." << endl;
+	}
 }
 
 int Queue::deQueue()
@@ -32,7 +35,8 @@ int Queue::deQueue()
 		return value;
 	}
 	else {
-		cout << "" << endl;
+		cout << "**The queue is empty." << endl;
+
 		return -1;
 	}
 }
