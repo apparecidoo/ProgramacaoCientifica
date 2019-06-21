@@ -15,7 +15,7 @@ Queue::~Queue()
 	number_values = 0;
 }
 
-void Queue::queue(int value)
+void Queue::enqueue(int value)
 {
 	if (!isFull()) {
 		values[last_position] = value;
@@ -70,10 +70,10 @@ void Queue::printNext()
 
 void Queue::test()
 {
-	this->queue(10);
-	this->queue(9);
+	this->enqueue(10);
+	this->enqueue(9);
 	this->print();
-	this->queue(8);
+	this->enqueue(8);
 	this->deQueue();
 	this->deQueue();
 	this->print();

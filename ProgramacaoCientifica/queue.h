@@ -12,7 +12,7 @@ public:
 	Queue();
 	~Queue();
 
-	void queue(int value); // insert a value in the queue
+	void enqueue(int value); // insert a value in the queue
 	int deQueue(); // remove the last value in the queue
 	void print(); // print all values from queue
 	void printNext(); // print the next value to be retired

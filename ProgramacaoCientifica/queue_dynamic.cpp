@@ -9,7 +9,7 @@ DynamicQueue::~DynamicQueue()
 {
 }
 
-void DynamicQueue::queue(int value)
+void DynamicQueue::enqueue(int value)
 {
 	cout << endl << "Enqueue number: " << value << endl;
 	this->addLast(value);
@@ -26,17 +26,17 @@ int DynamicQueue::deQueue()
 
 void DynamicQueue::test()
 {
-	this->queue(1);
+	this->enqueue(1);
 	this->print();
-	this->queue(2);
+	this->enqueue(2);
 	this->print();
-	this->queue(3);
+	this->enqueue(3);
 	this->print();
 	this->deQueue();
 	this->print();
-	this->queue(4);
+	this->enqueue(4);
 	this->print();
-	this->queue(5);
+	this->enqueue(5);
 	this->print();
 	this->deQueue();
 	this->print();
