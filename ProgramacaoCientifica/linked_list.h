@@ -26,8 +26,8 @@ private:
 
 	bool isEmpty(); // check if the stack is empty
 	bool isFull(); // check if the stack is full
-	void deleteNode(Node* node); // delete the node
-	Node* createNode(int value);
+	void deleteNode(Node* node); // delete the node deallocating memory
+	Node* createNode(int value); // create the node allocating memory
 };
 
 #endif

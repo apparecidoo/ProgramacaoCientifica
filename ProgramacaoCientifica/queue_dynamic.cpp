@@ -15,7 +15,7 @@ void DynamicQueue::enqueue(int value)
 	this->addLast(value);
 }
 
-int DynamicQueue::deQueue()
+int DynamicQueue::dequeue()
 {
 	int value = this->removeFirst();
 
@@ -32,19 +32,19 @@ void DynamicQueue::test()
 	this->print();
 	this->enqueue(3);
 	this->print();
-	this->deQueue();
+	this->dequeue();
 	this->print();
 	this->enqueue(4);
 	this->print();
 	this->enqueue(5);
 	this->print();
-	this->deQueue();
+	this->dequeue();
 	this->print();
-	this->deQueue();
+	this->dequeue();
 	this->print();
-	this->deQueue();
+	this->dequeue();
 	this->print();
-	this->deQueue();
+	this->dequeue();
 	this->print();
 }
 

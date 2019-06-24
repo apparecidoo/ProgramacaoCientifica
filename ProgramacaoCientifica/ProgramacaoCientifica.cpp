@@ -15,9 +15,9 @@ int main()
 
 	//LinkedList().test();
 
-	//DynamicStack().test();
+	DynamicStack().test();
 
-	DynamicQueue().test();
+	//DynamicQueue().test();
 
 
 	system("pause");

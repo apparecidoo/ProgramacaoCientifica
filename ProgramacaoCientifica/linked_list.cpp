@@ -18,15 +18,14 @@ LinkedList::~LinkedList()
 void LinkedList::addFirst(int value)
 {
 	if (!isFull()) {
-
 		if (isEmpty()) {
-			root_node = createNode(value);
+			root_node = createNode(value); // if is the list is empty, add as root
 		}
 		else {
 			Node* node = root_node;
 
-			root_node = createNode(value);
-			root_node->next_node = node;
+			root_node = createNode(value); // set the new root
+			root_node->next_node = node; // set next_node from the new root with the old root, so "new_root_node->next_node = old_root"
 		}
 	}
 	else {
@@ -37,19 +36,20 @@ void LinkedList::addFirst(int value)
 void LinkedList::addLast(int value)
 {
 	if (isEmpty()) {
-		root_node = createNode(value);
+		root_node = createNode(value); // if is the list is empty, add as root
 	}
 	else {
 		if (!isFull()) {
 
 			Node* node = root_node;
 
-			while (node->next_node != NULL)
+			// going to the end
+			while (node != NULL)
 			{
 				node = node->next_node;
 			}
 
-			node->next_node = createNode(value);
+			node->next_node = createNode(value); // allocate memory
 		}
 		else {
 			cout << "**The list is full." << endl;
@@ -59,17 +59,17 @@ void LinkedList::addLast(int value)
 
 int LinkedList::removeFirst()
 {
-	int value = -1;
+	int value = -1; // return -1 if something is wrong
 
 	if (!isEmpty()) {
 
 		Node* node = root_node;
 
-		root_node = node->next_node;
+		root_node = node->next_node; // get the next node and set as root
 
-		value = node->value;
+		value = node->value; // get the value to be returned
 
-		deleteNode(node);
+		deleteNode(node); // deallocate the memory
 	}
 	else {
 		cout << "**The list is empty." << endl;
@@ -80,29 +80,29 @@ int LinkedList::removeFirst()
 
 int LinkedList::removeLast()
 {
-	int value = -1;
+	int value = -1; // return -1 if something is wrong
 
 	if (!isEmpty()) {
 
 		Node* node = root_node;
 		Node* previous_node = NULL;
 
-		while (node->next_node != NULL)
+		while (node != NULL)
 		{
 			if(node->next_node != NULL)
 				previous_node = node; // if was the root, then we need to maintain NULL on previous_node
 
-			node = node->next_node;
+			node = node->next_node; // got to next node
 		}
 
 		if (previous_node != NULL)
-			previous_node->next_node = NULL; // remove any node
+			previous_node->next_node = NULL; // remove the link with the next node
 		else
 			root_node = NULL; // if was the root, remove root_node setting NULL
 
-		value = node->value;
+		value = node->value; // get the value to be returned
 
-		deleteNode(node);
+		deleteNode(node); // deallocate the memory
 	}
 	else {
 		cout << "**The list is empty." << endl;
@@ -116,6 +116,7 @@ void LinkedList::print()
 	cout << endl << "Values from List: " << endl;
 	Node* node = root_node;
 
+	// going to the end
 	while (node != NULL)
 	{
 		cout << node->value << " | ";
@@ -157,14 +158,14 @@ void LinkedList::test()
 
 bool LinkedList::isEmpty()
 {
-	return root_node == NULL;
+	return root_node == NULL; // if the root is null then the list is empty
 }
 
 bool LinkedList::isFull()
 {
 	try
 	{
-		Node* node = createNode(0);
+		Node* node = createNode(0); // allocate memory
 
 		if (node == NULL) {
 			cout << "***Error: Cannot allocate memory, Node is null." << endl;
@@ -185,11 +186,11 @@ bool LinkedList::isFull()
 void LinkedList::deleteNode(Node * node)
 {
 	if (node != NULL) {
-		delete node;
+		delete node; // deallocate memory
 	}
 }
 
 Node * LinkedList::createNode(int value)
 {
-	return new Node(value);
+	return new Node(value); // allocate memory
 }

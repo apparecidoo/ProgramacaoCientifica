@@ -20,24 +20,25 @@ void Stack::push(int value)
 		cout << endl << "Push number: " << value << endl;
 	}
 	else {
-		cout << "**The stack is full." << endl;
+		cout << endl << "**The stack is full." << endl;
 	}
 }
 
 int Stack::pop()
 {
+	int value = -1; // return -1 if something is wrong
+
 	if (!isEmpty()) {
-		int value = values[top];
+		value = values[top - 1];
 		top--;
 
 		cout << endl << "Pop number: " << value << endl;
-
-		return value;
 	}
 	else {
-		cout << "**The stack is empty." << endl;
-		return -1; // return -1 if the stack is empty
+		cout << endl << "**The stack is empty." << endl;
 	}
+
+	return value;
 }
 
 void Stack::print()
@@ -45,6 +46,7 @@ void Stack::print()
 	cout << endl << "Values from Stack: " << endl;
 	cout << "[down] - ";
 
+	// sweeping the array to print in the screen
 	for (int i = 0; i < top; i++)
 	{
 		cout << values[i] << " | ";
@@ -55,30 +57,29 @@ void Stack::print()
 	cout << endl;
 }
 
-void Stack::printTop()
-{
-	cout << "Top Stack: " << values[top] << endl;
-}
-
 void Stack::test()
 {
 	this->push(10);
+	this->print();
 	this->push(9);
 	this->print();
 	this->push(8);
 	this->pop();
+	this->print();
 	this->pop();
 	this->print();
 	this->pop();
+	this->print();
 	this->pop();
+	cout << endl;
 }
 
 bool Stack::isEmpty()
 {
-	return this->top == 0;
+	return this->top == 0; // if the number of items is zero then is empty
 }
 
 bool Stack::isFull()
 {
-	return this->top == SIZE;
+	return this->top == SIZE; // if the number of items is equal SIZE then is full
 }

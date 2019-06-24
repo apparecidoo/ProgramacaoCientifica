@@ -15,7 +15,6 @@ public:
 	void push(int value); // insert a value in the stack
 	int pop(); // remove the last value in the stack
 	void print(); // print all values from stack
-	void printTop(); // print the last value inserted
 	void test(); // method to test
 
 private:

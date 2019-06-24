@@ -18,31 +18,31 @@ Queue::~Queue()
 void Queue::enqueue(int value)
 {
 	if (!isFull()) {
-		values[last_position] = value;
-		addQueue();
+		values[last_position] = value; // set the value in the array
+		addQueue(); // calculate the next position to be add
 
 		cout << endl << "Enqueue number: " << value << endl;
 	}
 	else {
-		cout << "**The queue is full." << endl;
+		cout << endl << "**The queue is full." << endl;
 	}
 }
 
-int Queue::deQueue()
+int Queue::dequeue()
 {
-	if (!isEmpty()) {
-		int value = values[first_position];
-		subQueue();
-		
-		cout << endl << "Dequeue number: " << value << endl;
+	int value = 1; // return -1 if something is wrong
 
-		return value;
+	if (!isEmpty()) {
+		value = values[first_position]; // get the value
+		subQueue(); // calculate the next position to be retired
+
+		cout << endl << "Dequeue number: " << value << endl;
 	}
 	else {
-		cout << "**The queue is empty." << endl;
-
-		return -1;
+		cout << endl << "**The queue is empty." << endl;
 	}
+
+	return value;
 }
 
 void Queue::print()
@@ -50,55 +50,56 @@ void Queue::print()
 	cout << endl << "Values from Queue: " << endl;
 	cout << "[begin] - ";
 
+	// sweeping the array to print in the screen
 	int i = first_position;
 	while (i != last_position)
 	{
 		i = i % SIZE;
-
 		cout << values[i] << " | ";
-
 		i++;
 	}
 
-	cout << " - [end]";
-}
-
-void Queue::printNext()
-{
-	cout << "Top Stack: " << values[first_position] << endl;
+	cout << " - [end]" << endl;
 }
 
 void Queue::test()
 {
 	this->enqueue(10);
+	this->print();
 	this->enqueue(9);
 	this->print();
 	this->enqueue(8);
-	this->deQueue();
-	this->deQueue();
 	this->print();
-	this->deQueue();
-	this->deQueue();
+	this->dequeue();
+	this->print();
+	this->dequeue();
+	this->print();
+	this->dequeue();
+	this->print();
+	this->dequeue();
+	this->print();
+
+	cout << endl;
 }
 
 bool Queue::isEmpty()
 {
-	return number_values == 0;
+	return number_values == 0; // if the number of items from queue is zero then is empty
 }
 
 bool Queue::isFull()
 {
-	return number_values == SIZE;
+	return number_values == SIZE; // if the number of items from queue is equal SIZE then is full
 }
 
 void Queue::addQueue()
 {
-	last_position = (last_position + 1) % SIZE; // push a value and then add 1 for the next value to be added
-	number_values++;
+	last_position = (last_position + 1) % SIZE; // push a value and then add 1 for the next value to be added, because is a circular queue
+	number_values++; // add +1 from total number
 }
 
 void Queue::subQueue()
 {
-	first_position = (first_position + 1) % SIZE; // pop a value and then add 1 for the next value to be retired
-	number_values--;
+	first_position = (first_position + 1) % SIZE; // pop a value and then add 1 for the next value to be retired, because is a circular queue
+	number_values--; // sub -1 from total number
 }

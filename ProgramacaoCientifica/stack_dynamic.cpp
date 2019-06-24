@@ -13,12 +13,12 @@ void DynamicStack::push(int value)
 {
 	cout << endl << "Push number: " << value << endl;
 
-	this->addLast(value);
+	this->addFirst(value);
 }
 
 int DynamicStack::pop()
 {
-	int value = this->removeLast();
+	int value = this->removeFirst();
 
 	cout << endl << "Pop number: " << value << endl;
 
@@ -51,7 +51,7 @@ void DynamicStack::test() {
 void DynamicStack::print()
 {
 	cout << endl << "Values from Stack: " << endl;
-	cout << "[down] - ";
+	cout << "[top] - ";
 
 	Node* node = this->getRoot();
 
@@ -61,7 +61,7 @@ void DynamicStack::print()
 		node = node->next_node;
 	}
 
-	cout << " - [top]";
+	cout << " - [down]";
 
 	cout << endl;
 }
