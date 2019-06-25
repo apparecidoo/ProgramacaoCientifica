@@ -1,5 +1,6 @@
 #include <iostream>
 #include "simple_node.h"
+#include "custom_exception.h"
 
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H

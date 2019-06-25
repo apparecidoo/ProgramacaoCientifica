@@ -17,7 +17,11 @@ LinkedList::~LinkedList()
 
 void LinkedList::addFirst(int value)
 {
-	if (!isFull()) {
+	try
+	{
+		if (isFull())
+			throw CustomException("**The list is full.");
+
 		if (isEmpty()) {
 			root_node = createNode(value); // if is the list is empty, add as root
 		}
@@ -28,18 +32,22 @@ void LinkedList::addFirst(int value)
 			root_node->next_node = node; // set next_node from the new root with the old root, so "new_root_node->next_node = old_root"
 		}
 	}
-	else {
-		cout << "**The list is full." << endl;
+	catch (CustomException& ex)
+	{
+		ex.showMessage();
 	}
 }
 
 void LinkedList::addLast(int value)
 {
-	if (isEmpty()) {
-		root_node = createNode(value); // if is the list is empty, add as root
-	}
-	else {
-		if (!isFull()) {
+	try
+	{
+		if (isEmpty()) {
+			root_node = createNode(value); // if is the list is empty, add as root
+		}
+		else {
+			if (isFull())
+				throw CustomException("**The list is full.");
 
 			Node* node = root_node;
 
@@ -51,9 +59,10 @@ void LinkedList::addLast(int value)
 
 			node->next_node = createNode(value); // allocate memory
 		}
-		else {
-			cout << "**The list is full." << endl;
-		}
+	}
+	catch (CustomException& ex)
+	{
+		ex.showMessage();
 	}
 }
 
@@ -61,18 +70,19 @@ int LinkedList::removeFirst()
 {
 	int value = -1; // return -1 if something is wrong
 
-	if (!isEmpty()) {
+	try
+	{
+		if (isEmpty())
+			throw CustomException("**The list is empty.");
 
 		Node* node = root_node;
-
 		root_node = node->next_node; // get the next node and set as root
-
 		value = node->value; // get the value to be returned
-
 		deleteNode(node); // deallocate the memory
 	}
-	else {
-		cout << "**The list is empty." << endl;
+	catch (CustomException& ex)
+	{
+		ex.showMessage();
 	}
 
 	return value;
@@ -82,14 +92,17 @@ int LinkedList::removeLast()
 {
 	int value = -1; // return -1 if something is wrong
 
-	if (!isEmpty()) {
+	try
+	{
+		if (isEmpty())
+			throw CustomException("**The list is empty.");
 
 		Node* node = root_node;
 		Node* previous_node = NULL;
 
 		while (node != NULL)
 		{
-			if(node->next_node != NULL)
+			if (node->next_node != NULL)
 				previous_node = node; // if was the root, then we need to maintain NULL on previous_node
 
 			node = node->next_node; // got to next node
@@ -104,8 +117,9 @@ int LinkedList::removeLast()
 
 		deleteNode(node); // deallocate the memory
 	}
-	else {
-		cout << "**The list is empty." << endl;
+	catch (CustomException& ex)
+	{
+		ex.showMessage();
 	}
 
 	return value;
@@ -176,21 +190,49 @@ bool LinkedList::isFull()
 
 		return false;
 	}
+	catch (CustomException& ex)
+	{
+		ex.showMessage();
+		return true;
+	}
 	catch (const std::exception& ex)
 	{
 		cout << "***Error: " << ex.what() << endl;
-		return true; 
+		return true;
 	}
 }
 
 void LinkedList::deleteNode(Node * node)
 {
-	if (node != NULL) {
+	try
+	{
+		if (node == NULL)
+			throw CustomException("**Error: The node cannot be null on delete.");
+
 		delete node; // deallocate memory
 	}
+	catch (CustomException& ex)
+	{
+		ex.showMessage();
+	}
+
 }
 
 Node * LinkedList::createNode(int value)
 {
-	return new Node(value); // allocate memory
+	Node* node = NULL;
+
+	try
+	{
+		node = new Node(value); // allocate memory
+
+		if (node == NULL)
+			throw CustomException("**Error: The node cannot be allocated.");
+	}
+	catch (CustomException& ex)
+	{
+		ex.showMessage();
+	}
+
+	return node;
 }

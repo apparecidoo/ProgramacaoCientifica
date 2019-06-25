@@ -6,6 +6,7 @@
 #include "stack_dynamic.h"
 #include "queue.h"
 #include "queue_dynamic.h"
+#include "custom_exception.h"
 
 int main()
 {
@@ -15,11 +16,16 @@ int main()
 
 	//LinkedList().test();
 
-	DynamicStack().test();
+	//DynamicStack().test();
 
 	//DynamicQueue().test();
-
 
 	system("pause");
 	return 0;
 }
+
+
+
+
+
+

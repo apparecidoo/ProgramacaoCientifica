@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="custom_exception.h" />
     <ClInclude Include="linked_list.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="simple_node.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="stack_dynamic.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="custom_exception.cpp" />
     <ClCompile Include="linked_list.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="simple_node.cpp" />
