@@ -53,7 +53,7 @@ void DynamicStack::print()
 	cout << endl << "Values from Stack: " << endl;
 	cout << "[top] - ";
 
-	Node* node = this->getRoot();
+	SimpleNode* node = this->getRoot();
 
 	while (node != NULL)
 	{

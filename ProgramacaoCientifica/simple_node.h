@@ -1,17 +1,17 @@
 #include <iostream>
 
-#ifndef NODE_H
-#define NODE_H
+#ifndef SIMPLE_NODE_H
+#define SIMPLE_NODE_H
 
 using namespace std;
 
-class Node
+class SimpleNode
 {
 public:
-	Node(int value);
+	SimpleNode(int value);
 
 	int value; // value of the node
-	Node* next_node; // pointer for the next node
+	SimpleNode* next_node; // pointer for the next node
 };
 
 #endif

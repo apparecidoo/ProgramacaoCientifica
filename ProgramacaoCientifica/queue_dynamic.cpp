@@ -53,7 +53,7 @@ void DynamicQueue::print()
 	cout << endl << "Values from Queue: " << endl;
 	cout << "[begin] - ";
 
-	Node* node = this->getRoot();
+	SimpleNode* node = this->getRoot();
 
 	while (node != NULL)
 	{

@@ -26,7 +26,7 @@ void LinkedList::addFirst(int value)
 			root_node = createNode(value); // if is the list is empty, add as root
 		}
 		else {
-			Node* node = root_node;
+			SimpleNode* node = root_node;
 
 			root_node = createNode(value); // set the new root
 			root_node->next_node = node; // set next_node from the new root with the old root, so "new_root_node->next_node = old_root"
@@ -49,7 +49,7 @@ void LinkedList::addLast(int value)
 			if (isFull())
 				throw CustomException("**The list is full.");
 
-			Node* node = root_node;
+			SimpleNode* node = root_node;
 
 			// going to the end
 			while (node != NULL)
@@ -75,7 +75,7 @@ int LinkedList::removeFirst()
 		if (isEmpty())
 			throw CustomException("**The list is empty.");
 
-		Node* node = root_node;
+		SimpleNode* node = root_node;
 		root_node = node->next_node; // get the next node and set as root
 		value = node->value; // get the value to be returned
 		deleteNode(node); // deallocate the memory
@@ -97,8 +97,8 @@ int LinkedList::removeLast()
 		if (isEmpty())
 			throw CustomException("**The list is empty.");
 
-		Node* node = root_node;
-		Node* previous_node = NULL;
+		SimpleNode* node = root_node;
+		SimpleNode* previous_node = NULL;
 
 		while (node != NULL)
 		{
@@ -128,7 +128,7 @@ int LinkedList::removeLast()
 void LinkedList::print()
 {
 	cout << endl << "Values from List: " << endl;
-	Node* node = root_node;
+	SimpleNode* node = root_node;
 
 	// going to the end
 	while (node != NULL)
@@ -145,7 +145,7 @@ int LinkedList::getNumberNodes()
 	return this->number_nodes;
 }
 
-Node * const LinkedList::getRoot()
+SimpleNode * const LinkedList::getRoot()
 {
 	return root_node;
 }
@@ -179,7 +179,7 @@ bool LinkedList::isFull()
 {
 	try
 	{
-		Node* node = createNode(0); // allocate memory
+		SimpleNode* node = createNode(0); // allocate memory
 
 		if (node == NULL) {
 			cout << "***Error: Cannot allocate memory, Node is null." << endl;
@@ -202,7 +202,7 @@ bool LinkedList::isFull()
 	}
 }
 
-void LinkedList::deleteNode(Node * node)
+void LinkedList::deleteNode(SimpleNode * node)
 {
 	try
 	{
@@ -218,13 +218,13 @@ void LinkedList::deleteNode(Node * node)
 
 }
 
-Node * LinkedList::createNode(int value)
+SimpleNode * LinkedList::createNode(int value)
 {
-	Node* node = NULL;
+	SimpleNode* node = NULL;
 
 	try
 	{
-		node = new Node(value); // allocate memory
+		node = new SimpleNode(value); // allocate memory
 
 		if (node == NULL)
 			throw CustomException("**Error: The node cannot be allocated.");

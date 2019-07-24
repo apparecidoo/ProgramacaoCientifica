@@ -18,17 +18,17 @@ public:
 	int removeLast(); // remove the last value in the end of list
 	virtual void print(); // print all values from list
 	int getNumberNodes(); // return the number of nodes in the list
-	Node* const getRoot(); // get root node
+	SimpleNode* const getRoot(); // get root node
 	virtual void test(); // method to test
 
 private:
-	Node* root_node; // first position of queue to be retired
+	SimpleNode* root_node; // first position of queue to be retired
 	int number_nodes; // number of nodes in the list
 
 	bool isEmpty(); // check if the stack is empty
 	bool isFull(); // check if the stack is full
-	void deleteNode(Node* node); // delete the node deallocating memory
-	Node* createNode(int value); // create the node allocating memory
+	void deleteNode(SimpleNode* node); // delete the node deallocating memory
+	SimpleNode* createNode(int value); // create the node allocating memory
 };
 
 #endif
