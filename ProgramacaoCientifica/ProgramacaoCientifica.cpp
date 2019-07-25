@@ -10,15 +10,6 @@
 
 int main()
 {
-	//Stack().test();
-
-	//Queue().test();
-
-	//LinkedList().test();
-
-	//DynamicStack().test();
-
-	//DynamicQueue().test();
 
 	system("pause");
 	return 0;

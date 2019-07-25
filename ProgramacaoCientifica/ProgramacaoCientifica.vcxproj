@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="custom_exception.h" />
     <ClInclude Include="linked_list.h" />
+    <ClInclude Include="puzzle8.h" />
     <ClInclude Include="tree_node.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="puzzle.h" />
@@ -166,9 +167,7 @@
   <ItemGroup>
     <ClCompile Include="custom_exception.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="puzzle.cpp" />
-    <ClCompile Include="queue_dynamic.cpp" />
-    <ClCompile Include="stack_dynamic.cpp" />
+    <ClCompile Include="puzzle8.cpp" />
     <ClCompile Include="queue.cpp" />
     <ClCompile Include="stack.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

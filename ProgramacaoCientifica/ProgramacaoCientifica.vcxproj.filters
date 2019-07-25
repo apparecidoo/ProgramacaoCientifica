@@ -36,19 +36,13 @@
     <ClCompile Include="ProgramacaoCientifica.cpp">
       <Filter>Source Files\algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="puzzle.cpp">
-      <Filter>Source Files\algorithms</Filter>
-    </ClCompile>
     <ClCompile Include="queue.cpp">
-      <Filter>Source Files\algorithms</Filter>
-    </ClCompile>
-    <ClCompile Include="queue_dynamic.cpp">
       <Filter>Source Files\algorithms</Filter>
     </ClCompile>
     <ClCompile Include="stack.cpp">
       <Filter>Source Files\algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="stack_dynamic.cpp">
+    <ClCompile Include="puzzle8.cpp">
       <Filter>Source Files\algorithms</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,6 +78,9 @@
       <Filter>Header Files\algorithms</Filter>
     </ClInclude>
     <ClInclude Include="tree.h">
+      <Filter>Header Files\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="puzzle8.h">
       <Filter>Header Files\algorithms</Filter>
     </ClInclude>
   </ItemGroup>

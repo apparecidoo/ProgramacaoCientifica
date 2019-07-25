@@ -46,7 +46,7 @@ bool TreeNode<T>::has_child_to_explore()
 {
 	bool has = false;
 
-	SimpleNode<TreeNode<T>*>* simpleNode = children_nodes->getRoot();
+	SimpleNode<TreeNode<T>*>* simpleNode = children_nodes->get_root();
 
 	while (simpleNode != NULL)
 	{
@@ -64,7 +64,7 @@ bool TreeNode<T>::has_child_to_explore()
 template<class T>
 TreeNode<T>* TreeNode<T>::get_next_to_explore()
 {
-	SimpleNode<TreeNode<T>*>* simpleNode = children_nodes->getRoot();
+	SimpleNode<TreeNode<T>*>* simpleNode = children_nodes->get_root();
 
 	while (simpleNode != NULL)
 	{

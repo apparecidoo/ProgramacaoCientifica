@@ -15,13 +15,14 @@ public:
 
 	void addFirst(T value); // insert a value in the beginning of list
 	void addLast(T value); // insert a value in the end of list
-	int removeFirst(); // remove the last value in the beginning of list
-	int removeLast(); // remove the last value in the end of list
+	T removeFirst(); // remove the last value in the beginning of list
+	T removeLast(); // remove the last value in the end of list
 	virtual void print(); // print all values from list
 	int getNumberNodes(); // return the number of nodes in the list
-	SimpleNode<T>* getRoot(); // get root node
+	SimpleNode<T>* get_root(); // get root node
 	bool isEmpty(); // check if the stack is empty
 	bool isFull(); // check if the stack is full
+	SimpleNode<T>* search(T content); // search if exists
 	virtual void test(); // method to test
 
 protected:
@@ -103,9 +104,9 @@ void LinkedList<T>::addLast(T value)
 }
 
 template <class T>
-int LinkedList<T>::removeFirst()
+T LinkedList<T>::removeFirst()
 {
-	int value = -1; // return -1 if something is wrong
+	T value = NULL; // return NULL if something is wrong
 
 	try
 	{
@@ -126,9 +127,9 @@ int LinkedList<T>::removeFirst()
 }
 
 template <class T>
-int LinkedList<T>::removeLast()
+T LinkedList<T>::removeLast()
 {
-	int value = -1; // return -1 if something is wrong
+	T value = NULL; // return NULL if something is wrong
 
 	try
 	{
@@ -175,9 +176,26 @@ int LinkedList<T>::getNumberNodes()
 }
 
 template <class T>
-SimpleNode<T>* LinkedList<T>::getRoot()
+SimpleNode<T>* LinkedList<T>::get_root()
 {
 	return root_node;
+}
+
+template<class T>
+inline SimpleNode<T>* LinkedList<T>::search(T content)
+{
+	SimpleNode<T>* node = root_node;
+
+	// going to the end
+	while (node != NULL)
+	{
+		if (node->content == content)
+			return node;
+
+		node = node->next_node;
+	}
+
+	return NULL;
 }
 
 template <class T>

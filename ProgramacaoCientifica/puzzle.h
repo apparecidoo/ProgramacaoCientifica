@@ -15,9 +15,8 @@ public:
 	bool compare(T first, T second) override;
 	TreeNode<T>* search_bfs(T content);
 	TreeNode<T>* search_dfs(T content);
-	TreeNode<T>* create_children_nodes(TreeNode<T>* node);
-	void test() override;
-	
+	virtual TreeNode<T>* create_children_nodes(TreeNode<T>* node) = 0;
+	void test() override;	
 };
 
 template <class T>
@@ -74,18 +73,6 @@ TreeNode<T>* Puzzle<T>::search_dfs(T content)
 	}
 
 	return NULL;
-}
-
-template <class T>
-TreeNode<T>* Puzzle<T>::create_children_nodes(TreeNode<T>* node)
-{
-	for (int i = 0; i < SIZE; i++)
-	{
-		for (int j = 0; j < SIZE; j++)
-		{
-
-		}
-	}
 }
 
 template <class T>
