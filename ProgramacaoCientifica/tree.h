@@ -136,6 +136,8 @@ TreeNode<T>* Tree<T>::search_bfs(T content)
 			node = node->parent;
 		}
 	}
+
+	return NULL;
 }
 
 template<class T>
