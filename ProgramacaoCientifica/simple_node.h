@@ -5,13 +5,21 @@
 
 using namespace std;
 
+template <class T>
 class SimpleNode
 {
 public:
-	SimpleNode(int value);
+	SimpleNode(T value);
 
-	int value; // value of the node
+	T content; // value of the node
 	SimpleNode* next_node; // pointer for the next node
 };
+
+template <class T>
+SimpleNode<T>::SimpleNode(T value)
+{
+	this->content = value;
+	next_node = NULL;
+}
 
 #endif

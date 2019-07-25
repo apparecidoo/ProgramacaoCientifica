@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class DynamicStack : LinkedList {
+class DynamicStack : LinkedList<int> {
 public:
 	DynamicStack();
 	~DynamicStack();

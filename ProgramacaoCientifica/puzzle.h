@@ -14,6 +14,10 @@ public:
 	~Puzzle();
 
 	bool compare(int first[SIZE][SIZE], int second[SIZE][SIZE]) override;
+	TreeNode<int[SIZE][SIZE]>* search_bfs(int content[SIZE][SIZE]);
+	TreeNode<int[SIZE][SIZE]>* search_dfs(int content[SIZE][SIZE]);
+	void test() override;
+	
 };
 
 #endif

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class DynamicQueue : LinkedList {
+class DynamicQueue : LinkedList<int> {
 public:
 	DynamicQueue();
 	~DynamicQueue();
