@@ -168,6 +168,8 @@
     <ClCompile Include="custom_exception.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="puzzle8.cpp" />
+    <ClCompile Include="queue_dynamic.cpp" />
+    <ClCompile Include="stack_dynamic.cpp" />
     <ClCompile Include="queue.cpp" />
     <ClCompile Include="stack.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
