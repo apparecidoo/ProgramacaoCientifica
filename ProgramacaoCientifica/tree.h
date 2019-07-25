@@ -38,7 +38,7 @@ public:
 template<class T>
 int Tree<T>::new_id()
 {
-	return this->++id;
+	return this->id++;
 }
 
 template <class T>
@@ -54,7 +54,7 @@ Tree<T>::Tree()
 template<class T>
 Tree<T>::~Tree()
 {
-	this->remove_cascate(root)
+	this->remove_cascate(root);
 }
 
 template<class T>

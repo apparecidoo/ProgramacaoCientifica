@@ -13,7 +13,7 @@ public:
 	~Puzzle8();
 
 	bool compare(int first[SIZE][SIZE], int second[SIZE][SIZE]) override;
-	void create_children_nodes(TreeNode<int[SIZE][SIZE]>* node);
+	void create_children_nodes(TreeNode<int[SIZE][SIZE]>* node) override;
 };
 
 #endif

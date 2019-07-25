@@ -11,7 +11,17 @@ Puzzle8::~Puzzle8()
 
 bool Puzzle8::compare(int first[SIZE][SIZE], int second[SIZE][SIZE])
 {
-	return false;
+	for (int i = 0; i < SIZE; i++)
+	{
+		for (int j = 0; j < SIZE; j++)
+		{
+			if (first[i][j] == second[i][j]) {
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 void Puzzle8::create_children_nodes(TreeNode<int[SIZE][SIZE]>* node)

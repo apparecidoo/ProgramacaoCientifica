@@ -12,10 +12,9 @@ public:
 	Puzzle();
 	~Puzzle();
 
-	bool compare(T first, T second) override;
 	TreeNode<T>* search_bfs(T content);
 	TreeNode<T>* search_dfs(T content);
-	virtual TreeNode<T>* create_children_nodes(TreeNode<T>* node) = 0;
+	virtual void create_children_nodes(TreeNode<T>* node) = 0;
 	void test() override;	
 };
 
@@ -31,44 +30,67 @@ Puzzle<T>::~Puzzle()
 }
 
 template <class T>
-bool Puzzle<T>::compare(T first, T second)
+TreeNode<T>* Puzzle<T>::search_bfs(T content)
 {
-	for (int i = 0; i < SIZE; i++)
+	this->queue_bfs_list->enqueue(root); // start my queue
+
+	while (!this->queue_bfs_list->isEmpty())
 	{
-		for (int j = 0; j < SIZE; j++)
-		{
-			if (first[i][j] != second[i][j]) {
-				return false;
+		TreeNode<T>* node = this->queue_bfs_list->dequeue();
+		node->explored = true;
+
+		if (compare(node->content, content))
+			return node;
+
+		this->create_children_nodes(node); // create the new neighbors
+
+		// get the neighbors to be explored
+		if (node->has_children()) {
+			SimpleNode<TreeNode<T>*>* child = node->children_nodes->get_root();
+
+			while (child != NULL)
+			{
+				if (!child->content->explored && this->queue_bfs_list->search(child) == NULL)
+				{
+					this->queue_bfs_list->enqueue(child->content);
+				}
+
+				child = child->next_node;
 			}
 		}
 	}
 
-	return true;
-}
-
-template <class T>
-TreeNode<T>* Puzzle<T>::search_bfs(T content)
-{
-	return nullptr;
+	return NULL;
 }
 
 template <class T>
 TreeNode<T>* Puzzle<T>::search_dfs(T content)
 {
-	TreeNode<T>* node = root;
+	this->stack_dfs_list->push(root);
 
-	while (node != NULL)
+	while (!this->stack_dfs_list->isEmpty())
 	{
+		TreeNode<T>* node = this->stack_dfs_list->pop();
+		node->explored = true;
+
 		if (compare(node->content, content))
 			return node;
 
-		// get the next node to be explored
-		if (node->has_child_to_explore()) {
-			node = node->get_next_to_explore();
-			node->explored = true;
-		}
-		else {
-			node = node->parent;
+		this->create_children_nodes(node); // create the new neighbors
+
+		// get the neighbors to be explored
+		if (!node->children_nodes->isEmpty()) {
+			SimpleNode<TreeNode<T>*>* child = node->children_nodes->get_root();
+
+			while (child != NULL)
+			{
+				if (!child->content->explored && this->queue_bfs_list->search(child) == NULL)
+				{
+					queue_bfs_list->push(child->content);
+				}
+
+				child = child->next_node;
+			}
 		}
 	}
 
@@ -78,6 +100,7 @@ TreeNode<T>* Puzzle<T>::search_dfs(T content)
 template <class T>
 void Puzzle<T>::test()
 {
+
 }
 
 
