@@ -7,7 +7,7 @@
 using namespace std;
 
 template <class T>
-class DynamicStack : LinkedList<T> {
+class DynamicStack : public LinkedList<T> {
 public:
 	DynamicStack();
 	~DynamicStack();

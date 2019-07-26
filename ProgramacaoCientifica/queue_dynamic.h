@@ -7,7 +7,7 @@
 using namespace std;
 
 template <class T>
-class DynamicQueue : LinkedList<T> {
+class DynamicQueue : public LinkedList<T> {
 public:
 	DynamicQueue();
 	~DynamicQueue();

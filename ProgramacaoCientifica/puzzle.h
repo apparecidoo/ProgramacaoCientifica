@@ -7,7 +7,7 @@
 using namespace std;
 
 template <class T>
-class Puzzle : Tree<T> {
+class Puzzle : public Tree<T> {
 public:
 	Puzzle();
 	~Puzzle();
@@ -19,7 +19,7 @@ public:
 };
 
 template <class T>
-Puzzle<T>::Puzzle() : Tree()
+Puzzle<T>::Puzzle() : Tree<T>()
 {
 
 }
@@ -32,14 +32,14 @@ Puzzle<T>::~Puzzle()
 template <class T>
 TreeNode<T>* Puzzle<T>::search_bfs(T content)
 {
-	this->queue_bfs_list->enqueue(root); // start my queue
+	this->queue_bfs_list->enqueue(this->root); // start my queue
 
 	while (!this->queue_bfs_list->isEmpty())
 	{
 		TreeNode<T>* node = this->queue_bfs_list->dequeue();
 		node->explored = true;
 
-		if (compare(node->content, content))
+		if (this->compare(node->content, content))
 			return node;
 
 		this->create_children_nodes(node); // create the new neighbors
@@ -50,7 +50,7 @@ TreeNode<T>* Puzzle<T>::search_bfs(T content)
 
 			while (child != NULL)
 			{
-				if (!child->content->explored && this->queue_bfs_list->search(child) == NULL)
+				if (!child->content->explored && this->queue_bfs_list->search(child->content) == NULL)
 				{
 					this->queue_bfs_list->enqueue(child->content);
 				}
@@ -66,14 +66,14 @@ TreeNode<T>* Puzzle<T>::search_bfs(T content)
 template <class T>
 TreeNode<T>* Puzzle<T>::search_dfs(T content)
 {
-	this->stack_dfs_list->push(root);
+	this->stack_dfs_list->push(this->root);
 
 	while (!this->stack_dfs_list->isEmpty())
 	{
 		TreeNode<T>* node = this->stack_dfs_list->pop();
 		node->explored = true;
 
-		if (compare(node->content, content))
+		if (this->compare(node->content, content))
 			return node;
 
 		this->create_children_nodes(node); // create the new neighbors
@@ -84,9 +84,9 @@ TreeNode<T>* Puzzle<T>::search_dfs(T content)
 
 			while (child != NULL)
 			{
-				if (!child->content->explored && this->queue_bfs_list->search(child) == NULL)
+				if (!child->content->explored && this->stack_dfs_list->search(child->content) == NULL)
 				{
-					queue_bfs_list->push(child->content);
+					this->stack_dfs_list->push(child->content);
 				}
 
 				child = child->next_node;

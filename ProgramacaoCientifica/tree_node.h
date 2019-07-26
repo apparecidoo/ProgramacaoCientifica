@@ -16,17 +16,17 @@ public:
 
 	int id;
 	bool explored;
-	T content; // value of the node
+	T* content; // value of the node
 
-	TreeNode(T value, TreeNode<T>* parent, int id = 0);
+	TreeNode(T* value, TreeNode<T>* parent, int id = 0);
 	bool has_children();
 	bool has_child_to_explore();
-	TreeNode<T>* get_next_to_explore();
+	TreeNode<T>* get_next_to_explore();	
 };
 
 
 template <class T>
-TreeNode<T>::TreeNode(T value, TreeNode<T>* parent, int id)
+TreeNode<T>::TreeNode(T* value, TreeNode<T>* parent, int id)
 {
 	this->id = id;
 	this->content = value;

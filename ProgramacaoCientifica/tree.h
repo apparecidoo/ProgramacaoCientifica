@@ -26,8 +26,8 @@ public:
 
 	Tree();
 	~Tree();
-	void add_children(TreeNode<T>* current_node, T value);
 	void remove_cascate(T content);
+	virtual void add_children(TreeNode<T>* current_node, T value);
 	virtual TreeNode<T>* search_bfs(T content);
 	virtual TreeNode<T>* search_dfs(T content);
 	virtual bool compare(T first, T second);
@@ -118,7 +118,7 @@ TreeNode<T>* Tree<T>::search_bfs(T content)
 
 			while (child != NULL)
 			{
-				if (!child->content->explored && this->queue_bfs_list->search(child) == NULL)
+				if (!child->content->explored && this->queue_bfs_list->search(child->content) == NULL)
 				{
 					this->queue_bfs_list->enqueue(child->content);
 				}
@@ -150,9 +150,9 @@ TreeNode<T>* Tree<T>::search_dfs(T content)
 
 			while (child != NULL)
 			{
-				if (!child->content->explored && this->queue_bfs_list->search(child) == NULL)
+				if (!child->content->explored && this->stack_dfs_list->search(child->content) == NULL)
 				{
-					queue_bfs_list->push(child->content);
+					stack_dfs_list->push(child->content);
 				}
 
 				child = child->next_node;
