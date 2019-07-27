@@ -31,16 +31,13 @@ DynamicQueue<T>::~DynamicQueue()
 template <class T>
 void DynamicQueue<T>::enqueue(T value)
 {
-	cout << endl << "Enqueue number: " << value << endl;
 	this->addLast(value);
 }
 
 template <class T>
 T DynamicQueue<T>::dequeue()
 {
-	int value = this->removeFirst();
-
-	cout << endl << "Dequeue number: " << value << endl;
+	T value = this->removeFirst();
 
 	return value;
 }

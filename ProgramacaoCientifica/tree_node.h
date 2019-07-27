@@ -15,10 +15,13 @@ public:
 	LinkedList<TreeNode<T>*>* children_nodes;
 
 	int id;
+	int h_score;
+	int g_score;
+	int f_score;
 	bool explored;
-	T* content; // value of the node
+	T content; // value of the node
 
-	TreeNode(T* value, TreeNode<T>* parent, int id = 0);
+	TreeNode(T value, TreeNode<T>* parent, int h_score = 0, int g_score = 0, int id = 0);
 	bool has_children();
 	bool has_child_to_explore();
 	TreeNode<T>* get_next_to_explore();	
@@ -26,9 +29,12 @@ public:
 
 
 template <class T>
-TreeNode<T>::TreeNode(T* value, TreeNode<T>* parent, int id)
+TreeNode<T>::TreeNode(T value, TreeNode<T>* parent, int h_score, int g_score, int id)
 {
 	this->id = id;
+	this->h_score = h_score;
+	this->g_score = g_score;
+	this->f_score = h_score + g_score;
 	this->content = value;
 	this->children_nodes = new LinkedList<TreeNode<T>*>();
 	this->parent = NULL;
@@ -38,7 +44,7 @@ TreeNode<T>::TreeNode(T* value, TreeNode<T>* parent, int id)
 template<class T>
 bool TreeNode<T>::has_children()
 {
-	return !children_nodes.isEmpty();
+	return !children_nodes->isEmpty();
 }
 
 template<class T>

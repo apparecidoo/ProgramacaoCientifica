@@ -12,8 +12,9 @@ public:
 	Puzzle();
 	~Puzzle();
 
-	TreeNode<T>* search_bfs(T content);
-	TreeNode<T>* search_dfs(T content);
+	TreeNode<T>* search_bfs(T content) override;
+	TreeNode<T>* search_dfs(T content) override;
+	TreeNode<T>* a_star(T content) override;
 	virtual void create_children_nodes(TreeNode<T>* node) = 0;
 	void test() override;	
 };
@@ -87,6 +88,39 @@ TreeNode<T>* Puzzle<T>::search_dfs(T content)
 				if (!child->content->explored && this->stack_dfs_list->search(child->content) == NULL)
 				{
 					this->stack_dfs_list->push(child->content);
+				}
+
+				child = child->next_node;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+template<class T>
+inline TreeNode<T>* Puzzle<T>::a_star(T content)
+{
+	TreeNode<T>* node = root;
+
+	while (node != NULL)
+	{
+		node->explored = true;
+
+		if (compare(node->content, content))
+			return node;
+
+		this->create_children_nodes(node); // create the new neighbors
+
+		// get the neighbors to be explored
+		if (node->has_children()) {
+			SimpleNode<TreeNode<T>*>* child = node->children_nodes->get_root();
+
+			while (child != NULL)
+			{
+				if (!child->content->explored && child->content->f_score <= node->f_score)
+				{
+					node = child->content;
 				}
 
 				child = child->next_node;
