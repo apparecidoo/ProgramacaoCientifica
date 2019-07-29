@@ -1,12 +1,13 @@
 #include "pch.h"
 #include "puzzle8.h"
 
-Puzzle8::Puzzle8()
+Puzzle8::Puzzle8(int** goal) : Puzzle(goal)
 {
 }
 
 Puzzle8::~Puzzle8()
 {
+	this->Puzzle<int**>::~Puzzle();
 }
 
 bool Puzzle8::compare(int** first, int** second)
@@ -15,7 +16,7 @@ bool Puzzle8::compare(int** first, int** second)
 	{
 		for (int j = 0; j < SIZE; j++)
 		{
-			if (first[i][j] == second[i][j]) {
+			if (first[i][j] != second[i][j]) {
 				return false;
 			}
 		}
@@ -26,10 +27,10 @@ bool Puzzle8::compare(int** first, int** second)
 
 void Puzzle8::create_children_nodes(TreeNode<int**>* node)
 {
-	TreeNode<int**>* first_move = NULL;
-	TreeNode<int**>* second_move = NULL;
-	TreeNode<int**>* third_move = NULL;
-	TreeNode<int**>* fourth_move = NULL;
+	TreeNode<int**>* left_move = NULL;
+	TreeNode<int**>* down_move = NULL;
+	TreeNode<int**>* right_move = NULL;
+	TreeNode<int**>* up_move = NULL;
 	bool search_zero = false;
 	int i = 0;
 	int j = 0;
@@ -57,42 +58,42 @@ void Puzzle8::create_children_nodes(TreeNode<int**>* node)
 		switch (j)
 		{
 		case 0:
-			first_move = get_copy(node->content);
-			first_move->content[0][0] = first_move->content[0][1];
-			first_move->content[0][1] = 0;
-			this->add_child(node, first_move->content);
+			left_move = get_new_node(node);
+			left_move->content[0][0] = left_move->content[0][1];
+			left_move->content[0][1] = 0;
+			this->set_child_properties(left_move, this->_goal);
 
-			second_move = get_copy(node->content);
-			second_move->content[0][0] = second_move->content[1][0];
-			second_move->content[1][0] = 0;
-			this->add_child(node, second_move->content);
+			down_move = get_new_node(node);
+			down_move->content[0][0] = down_move->content[1][0];
+			down_move->content[1][0] = 0;
+			this->set_child_properties(down_move, this->_goal);
 			break;
 		case 1:
-			first_move = get_copy(node->content);
-			first_move->content[0][1] = first_move->content[0][0];
-			first_move->content[0][0] = 0;
-			this->add_child(node, first_move->content);
+			left_move = get_new_node(node);
+			left_move->content[0][1] = left_move->content[0][0];
+			left_move->content[0][0] = 0;
+			this->set_child_properties(left_move, this->_goal);
 
-			second_move = get_copy(node->content);
-			second_move->content[0][1] = second_move->content[0][2];
-			second_move->content[0][2] = 0;
-			this->add_child(node, second_move->content);
+			down_move = get_new_node(node);
+			down_move->content[0][1] = down_move->content[1][1];
+			down_move->content[1][1] = 0;
+			this->set_child_properties(down_move, this->_goal);
 
-			third_move = get_copy(node->content);
-			third_move->content[0][1] = third_move->content[1][1];
-			third_move->content[1][1] = 0;
-			this->add_child(node, third_move->content);
+			right_move = get_new_node(node);
+			right_move->content[0][1] = right_move->content[0][2];
+			right_move->content[0][2] = 0;
+			this->set_child_properties(right_move, this->_goal);
 			break;
 		case 2:
-			first_move = get_copy(node->content);
-			first_move->content[0][2] = first_move->content[0][1];
-			first_move->content[0][1] = 0;
-			this->add_child(node, first_move->content);
+			left_move = get_new_node(node);
+			left_move->content[0][2] = left_move->content[0][1];
+			left_move->content[0][1] = 0;
+			this->set_child_properties(left_move, this->_goal);
 
-			second_move = get_copy(node->content);
-			second_move->content[0][2] = second_move->content[1][2];
-			second_move->content[1][2] = 0;
-			this->add_child(node, second_move->content);
+			down_move = get_new_node(node);
+			down_move->content[0][2] = down_move->content[1][2];
+			down_move->content[1][2] = 0;
+			this->set_child_properties(down_move, this->_goal);
 			break;
 		default:
 			break;
@@ -102,57 +103,58 @@ void Puzzle8::create_children_nodes(TreeNode<int**>* node)
 		switch (j)
 		{
 		case 0:
-			first_move = get_copy(node->content);
-			first_move->content[1][0] = first_move->content[0][0];
-			first_move->content[0][0] = 0;
-			this->add_child(node, first_move->content);
+			up_move = get_new_node(node);
+			up_move->content[1][0] = up_move->content[0][0];
+			up_move->content[0][0] = 0;
+			this->set_child_properties(up_move, this->_goal);
 
-			second_move = get_copy(node->content);
-			second_move->content[1][0] = second_move->content[2][0];
-			second_move->content[2][0] = 0;
-			this->add_child(node, second_move->content);
+			down_move = get_new_node(node);
+			down_move->content[1][0] = down_move->content[2][0];
+			down_move->content[2][0] = 0;
+			this->set_child_properties(down_move, this->_goal);
 
-			third_move = get_copy(node->content);
-			third_move->content[1][0] = third_move->content[1][1];
-			third_move->content[1][1] = 0;
-			this->add_child(node, third_move->content);
+			right_move = get_new_node(node);
+			right_move->content[1][0] = right_move->content[1][1];
+			right_move->content[1][1] = 0;
+			this->set_child_properties(right_move, this->_goal);
 			break;
 		case 1:
-			first_move = get_copy(node->content);
-			first_move->content[1][1] = first_move->content[0][1];
-			first_move->content[0][1] = 0;
-			this->add_child(node, first_move->content);
+			left_move = get_new_node(node);
+			left_move->content[1][1] = left_move->content[1][0];
+			left_move->content[1][0] = 0;
+			this->set_child_properties(left_move, this->_goal);
 
-			second_move = get_copy(node->content);
-			second_move->content[1][1] = second_move->content[1][0];
-			second_move->content[1][0] = 0;
-			this->add_child(node, second_move->content);
+			down_move = get_new_node(node);
+			down_move->content[1][1] = down_move->content[2][1];
+			down_move->content[2][1] = 0;
+			this->set_child_properties(down_move, this->_goal);
 
-			third_move = get_copy(node->content);
-			third_move->content[1][1] = third_move->content[2][1];
-			third_move->content[2][1] = 0;
-			this->add_child(node, third_move->content);
+			right_move = get_new_node(node);
+			right_move->content[1][1] = right_move->content[1][2];
+			right_move->content[1][2] = 0;
+			this->set_child_properties(right_move, this->_goal);
 
-			fourth_move = get_copy(node->content);
-			fourth_move->content[1][1] = fourth_move->content[1][2];
-			fourth_move->content[1][2] = 0;
-			this->add_child(node, fourth_move->content);
+			up_move = get_new_node(node);
+			up_move->content[1][1] = up_move->content[0][1];
+			up_move->content[0][1] = 0;
+			this->set_child_properties(up_move, this->_goal);
 			break;
 		case 2:
-			first_move = get_copy(node->content);
-			first_move->content[1][2] = first_move->content[0][2];
-			first_move->content[0][2] = 0;
-			this->add_child(node, first_move->content);
+			left_move = get_new_node(node);
+			left_move->content[1][2] = left_move->content[1][1];
+			left_move->content[1][1] = 0;
+			this->set_child_properties(left_move, this->_goal);
 
-			second_move = get_copy(node->content);
-			second_move->content[1][2] = second_move->content[1][1];
-			second_move->content[1][1] = 0;
-			this->add_child(node, second_move->content);
+			down_move = get_new_node(node);
+			down_move->content[1][2] = down_move->content[2][2];
+			down_move->content[2][2] = 0;
+			this->set_child_properties(down_move, this->_goal);
 
-			third_move = get_copy(node->content);
-			third_move->content[1][2] = third_move->content[2][2];
-			third_move->content[2][2] = 0;
-			this->add_child(node, third_move->content);
+			up_move = get_new_node(node);
+			up_move->content[1][2] = up_move->content[0][2];
+			up_move->content[0][2] = 0;
+			this->set_child_properties(up_move, this->_goal);
+
 			break;
 		default:
 			break;
@@ -162,42 +164,42 @@ void Puzzle8::create_children_nodes(TreeNode<int**>* node)
 		switch (j)
 		{
 		case 0:
-			first_move = get_copy(node->content);
-			first_move->content[2][0] = first_move->content[1][0];
-			first_move->content[1][0] = 0;
-			this->add_child(node, first_move->content);
+			up_move = get_new_node(node);
+			up_move->content[2][0] = up_move->content[1][0];
+			up_move->content[1][0] = 0;
+			this->set_child_properties(up_move, this->_goal);
 
-			second_move = get_copy(node->content);
-			second_move->content[2][0] = second_move->content[2][1];
-			second_move->content[2][1] = 0;
-			this->add_child(node, second_move->content);
+			right_move = get_new_node(node);
+			right_move->content[2][0] = right_move->content[2][1];
+			right_move->content[2][1] = 0;
+			this->set_child_properties(right_move, this->_goal);
 			break;
 		case 1:
-			first_move = get_copy(node->content);
-			first_move->content[2][1] = first_move->content[0][2];
-			first_move->content[0][2] = 0;
-			this->add_child(node, first_move->content);
+			left_move = get_new_node(node);
+			left_move->content[2][1] = left_move->content[2][0];
+			left_move->content[2][0] = 0;
+			this->set_child_properties(left_move, this->_goal);
 
-			second_move = get_copy(node->content);
-			second_move->content[2][1] = second_move->content[1][1];
-			second_move->content[1][1] = 0;
-			this->add_child(node, second_move->content);
+			up_move = get_new_node(node);
+			up_move->content[2][1] = up_move->content[1][1];
+			up_move->content[1][1] = 0;
+			this->set_child_properties(up_move, this->_goal);
 
-			third_move = get_copy(node->content);
-			third_move->content[2][1] = third_move->content[2][2];
-			third_move->content[2][2] = 0;
-			this->add_child(node, third_move->content);
+			right_move = get_new_node(node);
+			right_move->content[2][1] = right_move->content[2][2];
+			right_move->content[2][2] = 0;
+			this->set_child_properties(right_move, this->_goal);
 			break;
 		case 2:
-			first_move = get_copy(node->content);
-			first_move->content[2][2] = first_move->content[1][2];
-			first_move->content[1][2] = 0;
-			this->add_child(node, first_move->content);
+			left_move = get_new_node(node);
+			left_move->content[2][2] = left_move->content[2][1];
+			left_move->content[2][1] = 0;
+			this->set_child_properties(left_move, this->_goal);
 
-			second_move = get_copy(node->content);
-			second_move->content[2][2] = second_move->content[2][1];
-			second_move->content[2][1] = 0;
-			this->add_child(node, second_move->content);
+			down_move = get_new_node(node);
+			down_move->content[2][2] = down_move->content[1][2];
+			down_move->content[1][2] = 0;
+			this->set_child_properties(down_move, this->_goal);
 			break;
 		default:
 			break;
@@ -206,44 +208,53 @@ void Puzzle8::create_children_nodes(TreeNode<int**>* node)
 	default:
 		break;
 	}
+
+	cout << "------------ Interation ------------" << endl << endl;
+	cout << "Node" << endl;
+	this->print_node(node);
+	cout << "---- Children" << endl;
+	this->print_children(node);
 }
 
-int Puzzle8::manhattan_distance(int ** content)
+int Puzzle8::manhattan_distance(int ** test, int ** goal)
 {
 	int sum = 0;
+	int i_test = 0;
+	int j_test = 0;
+	int i_goal = 0;
+	int j_goal = 0;
 
-	for (int i = 0; i < SIZE; i++)
+	// get the value to test
+	for (i_test = 0; i_test < SIZE; i_test++)
 	{
-		for (int j = 0; j < SIZE; j++)
+		for (j_test = 0; j_test < SIZE; j_test++)
 		{
-			switch (content[i][j])
+			bool found = false;
+
+			// search in the goal
+			for (i_goal = 0; i_goal < SIZE; i_goal++)
 			{
-			case 1:
-				sum += (i - 0) + (j - 0);
-				break;
-			case 2:
-				sum += (i - 0) + (j - 1);
-				break;
-			case 3:
-				sum += (i - 0) + (j - 2);
-				break;
-			case 4:
-				sum += (i - 1) + (j - 0);
-				break;
-			case 5:
-				sum += (i - 1) + (j - 1);
-				break;
-			case 6:
-				sum += (i - 1) + (j - 2);
-				break;
-			case 7:
-				sum += (i - 2) + (j - 0);
-				break;
-			case 8:
-				sum += (i - 2) + (j - 1);
-				break;
-			default:
-				break;
+				for (j_goal = 0; j_goal < SIZE; j_goal++)
+				{
+					if (test[i_test][j_test] == goal[i_goal][j_goal]) {
+						found = true;
+						break;
+					}
+				}
+
+				if (found)
+					break;
+
+				j_goal = 0;
+			}
+
+			if (found) {
+				sum += abs((i_test - i_goal) + (j_test - j_goal));
+				i_goal = 0;
+				j_goal = 0;
+			}
+			else {
+				throw CustomException("Error to find the manhattan distance");
 			}
 		}
 	}
@@ -251,7 +262,7 @@ int Puzzle8::manhattan_distance(int ** content)
 	return sum;
 }
 
-TreeNode<int**>* Puzzle8::get_copy(int** content)
+TreeNode<int**>* Puzzle8::get_new_node(TreeNode<int**>* node)
 {
 	int** copy = new int*[SIZE];
 
@@ -261,9 +272,67 @@ TreeNode<int**>* Puzzle8::get_copy(int** content)
 
 		for (int j = 0; j < SIZE; j++)
 		{
-			copy[i][j] = content[i][j];
+			copy[i][j] = node->content[i][j];
 		}
 	}
+	
+	TreeNode<int**>* new_node = new TreeNode<int**>(copy, node, 0);
+	node->children_nodes->enqueue(new_node);
 
-	return new TreeNode<int**>(copy, NULL, 0);
+	return new_node;
+}
+
+void Puzzle8::print_tree()
+{
+	this->print_node_children(this->root);
+}
+
+void Puzzle8::test()
+{
+	throw CustomException("test not implemented");
+}
+
+void Puzzle8::print_content(int ** content)
+{
+	for (int i = 0; i < SIZE; i++)
+	{
+		for (int j = 0; j < SIZE; j++)
+		{
+			cout << content[i][j] << "   ";
+		}
+
+		cout << endl;
+	}
+}
+
+void Puzzle8::print_node(TreeNode<int**>* node)
+{
+	if (node == NULL) {
+		cout << "Node is null or empty" << endl;
+		return;
+	}
+
+	cout << "Id: " << node->id << " | g_score: " << node->g_score << " | h_score: " << node->h_score << " | f_score " << node->f_score << endl;
+	this->print_content(node->content);
+}
+
+void Puzzle8::print_node_children(TreeNode<int**>* node)
+{
+	cout << "Id: " << node->id << " | g_score: " << node->g_score << " | h_score: " << node->h_score << " | f_score " << node->f_score << endl;
+	this->print_children(node);
+}
+
+void Puzzle8::print_children(TreeNode<int**>* node)
+{
+	if (node != NULL) {
+		if (node->has_children()) {
+			SimpleNode<TreeNode<int**>*>* child = node->children_nodes->get_root();
+
+			while (child != NULL)
+			{
+				this->print_node(child->content);
+				child = child->next_node;
+			}
+		}
+	}
 }

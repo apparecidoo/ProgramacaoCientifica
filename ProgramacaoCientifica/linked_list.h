@@ -13,16 +13,18 @@ public:
 	LinkedList();
 	~LinkedList();
 
-	void addFirst(T value); // insert a value in the beginning of list
-	void addLast(T value); // insert a value in the end of list
-	T removeFirst(); // remove the last value in the beginning of list
-	T removeLast(); // remove the last value in the end of list
-	virtual void print(); // print all values from list
-	int getNumberNodes(); // return the number of nodes in the list
+	void add_first(T value); // insert a value in the beginning of list
+	void add_last(T value); // insert a value in the end of list
+	T remove_first(); // remove the last value in the beginning of list
+	T remove_last(); // remove the last value in the end of list
+	int get_number_nodes(); // return the number of nodes in the list
 	SimpleNode<T>* get_root(); // get root node
-	bool isEmpty(); // check if the stack is empty
+	bool is_empty(); // check if the stack is empty
 	bool isFull(); // check if the stack is full
 	SimpleNode<T>* search(T content); // search if exists
+	void clear(); // remove all nodes from list
+
+	virtual void print(); // print all values from list
 	virtual void test(); // method to test
 
 protected:
@@ -43,22 +45,18 @@ LinkedList<T>::LinkedList()
 template <class T>
 LinkedList<T>::~LinkedList()
 {
-	// cleaning the list
-	while (!isEmpty())
-	{
-		removeFirst();
-	}
+	this->clear();
 }
 
 template <class T>
-void LinkedList<T>::addFirst(T value)
+void LinkedList<T>::add_first(T value)
 {
 	try
 	{
 		if (isFull())
 			throw CustomException("**The list is full.");
 
-		if (isEmpty()) {
+		if (is_empty()) {
 			root_node = createNode(value); // if is the list is empty, add as root
 		}
 		else {
@@ -67,6 +65,8 @@ void LinkedList<T>::addFirst(T value)
 			root_node = createNode(value); // set the new root
 			root_node->next_node = node; // set next_node from the new root with the old root, so "new_root_node->next_node = old_root"
 		}
+
+		this->number_nodes++;
 	}
 	catch (CustomException& ex)
 	{
@@ -75,27 +75,29 @@ void LinkedList<T>::addFirst(T value)
 }
 
 template <class T>
-void LinkedList<T>::addLast(T value)
+void LinkedList<T>::add_last(T value)
 {
 	try
 	{
-		if (isEmpty()) {
-			root_node = createNode(value); // if is the list is empty, add as root
+		if (this->is_empty()) {
+			this->root_node = createNode(value); // if is the list is empty, add as root
 		}
 		else {
 			if (isFull())
 				throw CustomException("**The list is full.");
 
-			SimpleNode<T>* node = root_node;
-
+			SimpleNode<T>* node = this->root_node;
+			
 			// going to the end
-			while (node != NULL)
+			while (node->next_node != NULL)
 			{
 				node = node->next_node;
 			}
 
-			node->next_node = createNode(value); // allocate memory
+			node->next_node = this->createNode(value); // allocate memory
 		}
+
+		this->number_nodes++;
 	}
 	catch (CustomException& ex)
 	{
@@ -104,19 +106,20 @@ void LinkedList<T>::addLast(T value)
 }
 
 template <class T>
-T LinkedList<T>::removeFirst()
+T LinkedList<T>::remove_first()
 {
 	T value = NULL; // return NULL if something is wrong
 
 	try
 	{
-		if (isEmpty())
+		if (is_empty())
 			throw CustomException("**The list is empty.");
 
-		SimpleNode<T>* node = root_node;
-		root_node = node->next_node; // get the next node and set as root
+		SimpleNode<T>* node = this->root_node;
+		this->root_node = node->next_node; // get the next node and set as root
 		value = node->content; // get the value to be returned
-		deleteNode(node); // deallocate the memory
+		this->deleteNode(node); // deallocate the memory
+		this->number_nodes--;
 	}
 	catch (CustomException& ex)
 	{
@@ -127,16 +130,16 @@ T LinkedList<T>::removeFirst()
 }
 
 template <class T>
-T LinkedList<T>::removeLast()
+T LinkedList<T>::remove_last()
 {
 	T value = NULL; // return NULL if something is wrong
 
 	try
 	{
-		if (isEmpty())
+		if (is_empty())
 			throw CustomException("**The list is empty.");
 
-		SimpleNode<T>* node = root_node;
+		SimpleNode<T>* node = this->root_node;
 		SimpleNode<T>* previous_node = NULL;
 
 		while (node != NULL)
@@ -150,11 +153,12 @@ T LinkedList<T>::removeLast()
 		if (previous_node != NULL)
 			previous_node->next_node = NULL; // remove the link with the next node
 		else
-			root_node = NULL; // if was the root, remove root_node setting NULL
+			this->root_node = NULL; // if was the root, remove root_node setting NULL
 
 		value = node->content; // get the value to be returned
 
-		deleteNode(node); // deallocate the memory
+		this->deleteNode(node); // deallocate the memory
+		this->number_nodes--;
 	}
 	catch (CustomException& ex)
 	{
@@ -170,7 +174,7 @@ void LinkedList<T>::print()
 }
 
 template <class T>
-int LinkedList<T>::getNumberNodes()
+int LinkedList<T>::get_number_nodes()
 {
 	return this->number_nodes;
 }
@@ -198,6 +202,16 @@ inline SimpleNode<T>* LinkedList<T>::search(T content)
 	return NULL;
 }
 
+template<class T>
+inline void LinkedList<T>::clear()
+{
+	// cleaning the list
+	while (!is_empty())
+	{
+		remove_first();
+	}
+}
+
 template <class T>
 void LinkedList<T>::test()
 {
@@ -205,7 +219,7 @@ void LinkedList<T>::test()
 }
 
 template <class T>
-bool LinkedList<T>::isEmpty()
+bool LinkedList<T>::is_empty()
 {
 	return root_node == NULL; // if the root is null then the list is empty
 }

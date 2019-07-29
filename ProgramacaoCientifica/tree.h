@@ -20,6 +20,7 @@ protected:
 	int g_score;
 	DynamicQueue<TreeNode<T>*>* queue_bfs_list;
 	DynamicStack<TreeNode<T>*>* stack_dfs_list;
+	DynamicQueue<TreeNode<T>*>* explored_list;
 
 public:
 	TreeNode<T>* root;
@@ -27,13 +28,18 @@ public:
 	Tree();
 	~Tree();
 	void remove_cascate(T content);
-	virtual void add_child(TreeNode<T>* current_node, T value);
+	virtual void set_child_properties(TreeNode<T>* node, T goal);
+	virtual bool compare(T first, T second);
+	virtual int manhattan_distance(T test, T goal);
 	virtual TreeNode<T>* search_bfs(T content);
 	virtual TreeNode<T>* search_dfs(T content);
-	virtual TreeNode<T>* a_star(T content);
-	virtual bool compare(T first, T second);
-	virtual int manhattan_distance(T content);
-	virtual void test();
+	virtual TreeNode<T>* search_a_star(T content);
+	virtual void print_content(T content) = 0;
+	virtual void print_node(TreeNode<T>* node) = 0;
+	virtual void print_node_children(TreeNode<T>* node) = 0;
+	virtual void print_children(TreeNode<T>* node) = 0;
+	virtual void print_tree() = 0;
+	virtual void test() = 0;
 };
 
 
@@ -51,6 +57,7 @@ Tree<T>::Tree()
 	this->id = 1;
 	this->queue_bfs_list = new DynamicQueue<TreeNode<T>*>();
 	this->stack_dfs_list = new DynamicStack<TreeNode<T>*>();
+	this->explored_list = new DynamicQueue<TreeNode<T>*>();
 }
 
 template<class T>
@@ -58,93 +65,32 @@ Tree<T>::~Tree()
 {
 	if (root != NULL)
 		this->remove_cascate(root->content);
+
+	this->explored_list->clear();
+	this->stack_dfs_list->clear();
+	this->queue_bfs_list->clear();
 }
 
 template<class T>
-void Tree<T>::add_child(TreeNode<T>* current_node, T content)
+void Tree<T>::set_child_properties(TreeNode<T>* node, T goal)
 {
-	if (current_node == NULL) {
-		this->root = new TreeNode<T>(content, current_node, this->manhattan_distance(content), 0, this->new_id());
-	}
-	else {
-		current_node->children_nodes->addLast(new TreeNode<T>(content, current_node, this->manhattan_distance(content), current_node->g_score + 1, this->new_id()));
-	}
+	node->h_score = this->manhattan_distance(node->content, goal);
+	node->g_score = node->parent->g_score + 1;
+	node->f_score = node->h_score + node->g_score;
+	node->id = this->new_id();
 }
 
 template<class T>
 void Tree<T>::remove_cascate(T content)
 {
-	//this->stack_dfs_list->push(root);
+	this->explored_list->clear();
+	TreeNode<T>* nodeRoot = this->search_dfs(content);
+	this->stack_dfs_list->push(nodeRoot);
 
-	//while (!this->stack_dfs_list->isEmpty())
-	//{
-	//	TreeNode<T>* node = this->stack_dfs_list->pop();
-	//	node->explored = true;
-
-	//	//if (compare(node->content, content))
-	//	//	return node;
-
-	//	// get the neighbors to be explored
-	//	if (node->has_children()) {
-	//		SimpleNode<TreeNode<T>*>* child = node->children_nodes->get_root();
-
-	//		while (child != NULL)
-	//		{
-	//			if (!child->content->explored && this->stack_dfs_list->search(child->content) == NULL)
-	//			{
-	//				stack_dfs_list->push(child->content);
-	//			}
-
-	//			child = child->next_node;
-	//		}
-	//	}
-	//}
-}
-
-template<class T>
-TreeNode<T>* Tree<T>::search_bfs(T content)
-{
-	this->queue_bfs_list->enqueue(root); // start my queue
-
-	while (!this->queue_bfs_list->isEmpty())
-	{
-		TreeNode<T>* node = this->queue_bfs_list->dequeue();
-		node->explored = true;
-
-		if (compare(node->content, content))
-			return node;
-
-		// get the neighbors to be explored
-		if (node->has_children()) {
-			SimpleNode<TreeNode<T>*>* child = node->children_nodes->get_root();
-
-			while (child != NULL)
-			{
-				if (!child->content->explored && this->queue_bfs_list->search(child->content) == NULL)
-				{
-					this->queue_bfs_list->enqueue(child->content);
-				}
-
-				child = child->next_node;
-			}
-		}
-	}
-
-	return NULL;
-}
-
-template<class T>
-TreeNode<T>* Tree<T>::search_dfs(T content)
-{
-	this->stack_dfs_list->push(root);
-
-	while (!this->stack_dfs_list->isEmpty())
+	while (!this->stack_dfs_list->is_empty())
 	{
 		TreeNode<T>* node = this->stack_dfs_list->pop();
 		node->explored = true;
-
-		if (compare(node->content, content))
-			return node;
 
 		// get the neighbors to be explored
 		if (node->has_children()) {
@@ -161,18 +107,19 @@ TreeNode<T>* Tree<T>::search_dfs(T content)
 			}
 		}
 	}
-
-	return NULL;
 }
 
 template<class T>
-inline TreeNode<T>* Tree<T>::a_star(T content)
+TreeNode<T>* Tree<T>::search_bfs(T content)
 {
-	TreeNode<T>* node = root;
+	this->explored_list->clear();
+	this->queue_bfs_list->enqueue(root); // start my queue
 
-	while (node != NULL)
+	while (!this->queue_bfs_list->is_empty())
 	{
+		TreeNode<T>* node = this->queue_bfs_list->dequeue();
 		node->explored = true;
+		this->explored_list->enqueue(node);
 
 		if (compare(node->content, content))
 			return node;
@@ -183,7 +130,74 @@ inline TreeNode<T>* Tree<T>::a_star(T content)
 
 			while (child != NULL)
 			{
-				if (!child->content->explored && child->content->f_score <= node->f_score)
+				if (this->explored_list->search(child->content) == NULL && this->queue_bfs_list->search(child->content) == NULL)
+				{
+					this->queue_bfs_list->enqueue(child->content);
+				}
+
+				child = child->next_node;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+template<class T>
+TreeNode<T>* Tree<T>::search_dfs(T content)
+{
+	this->explored_list->clear();
+	this->stack_dfs_list->push(root);
+
+	while (!this->stack_dfs_list->is_empty())
+	{
+		TreeNode<T>* node = this->stack_dfs_list->pop();
+		node->explored = true;
+		this->explored_list->enqueue(node);
+
+		if (compare(node->content, content))
+			return node;
+
+		// get the neighbors to be explored
+		if (node->has_children()) {
+			SimpleNode<TreeNode<T>*>* child = node->children_nodes->get_root();
+
+			while (child != NULL)
+			{
+				if (this->explored_list->search(child->content) == NULL && this->stack_dfs_list->search(child->content) == NULL)
+				{
+					stack_dfs_list->push(child->content);
+				}
+
+				child = child->next_node;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+template<class T>
+TreeNode<T>* Tree<T>::search_a_star(T content)
+{
+	this->explored_list->clear();
+	TreeNode<T>* node = root;
+
+	while (node != NULL)
+	{
+		node->explored = true;
+		this->explored_list->enqueue(node);
+
+		if (compare(node->content, content))
+			return node;
+
+		// get the neighbors to be explored
+		if (node->has_children()) {
+			SimpleNode<TreeNode<T>*>* child = node->children_nodes->get_root();
+
+			while (child != NULL)
+			{
+				if (this->explored_list->search(child->content) == NULL && child->content->f_score <= node->f_score)
 				{
 					node = child->content;
 				}
@@ -203,15 +217,9 @@ bool Tree<T>::compare(T first, T second)
 }
 
 template<class T>
-inline int Tree<T>::manhattan_distance(T content)
+int Tree<T>::manhattan_distance(T test, T goal)
 {
 	return 0;
-}
-
-template<class T>
-void Tree<T>::test()
-{
-
 }
 
 

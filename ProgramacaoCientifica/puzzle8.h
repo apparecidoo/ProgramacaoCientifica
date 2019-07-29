@@ -7,15 +7,22 @@
 
 using namespace std;
 
-class Puzzle8 : Puzzle<int**> {
+class Puzzle8 : public Puzzle<int**> {
+
 public:
-	Puzzle8();
+	Puzzle8(int** goal);
 	~Puzzle8();
 
 	bool compare(int** first, int** second) override;
 	void create_children_nodes(TreeNode<int**>* node) override;
-	int manhattan_distance(int** content) override;
-	TreeNode<int**>* get_copy(int** content);
+	int manhattan_distance(int** test, int** goal) override;
+	TreeNode<int**>* get_new_node(TreeNode<int**>* node);
+	void print_content(int** content) override;
+	void print_node(TreeNode<int**>* node) override;
+	void print_node_children(TreeNode<int**>* node) override;
+	void print_children(TreeNode<int**>* node) override;
+	void print_tree() override;
+	void test() override;
 };
 
 #endif

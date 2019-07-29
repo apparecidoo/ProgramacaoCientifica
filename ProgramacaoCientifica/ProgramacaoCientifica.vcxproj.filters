@@ -33,9 +33,6 @@
     <ClCompile Include="custom_exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProgramacaoCientifica.cpp">
-      <Filter>Source Files\algorithms</Filter>
-    </ClCompile>
     <ClCompile Include="queue.cpp">
       <Filter>Source Files\algorithms</Filter>
     </ClCompile>
@@ -47,6 +44,9 @@
     </ClCompile>
     <ClCompile Include="puzzle8.cpp">
       <Filter>Source Files\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramacaoCientifica.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

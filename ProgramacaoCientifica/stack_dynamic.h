@@ -31,13 +31,13 @@ DynamicStack<T>::~DynamicStack()
 template <class T>
 void DynamicStack<T>::push(T value)
 {
-	this->addFirst(value);
+	this->add_first(value);
 }
 
 template <class T>
 T DynamicStack<T>::pop()
 {
-	T value = this->removeFirst();
+	T value = this->remove_first();
 
 	return value;
 }
