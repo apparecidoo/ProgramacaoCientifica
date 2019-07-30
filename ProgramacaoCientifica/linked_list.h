@@ -17,8 +17,11 @@ public:
 	void add_last(T value); // insert a value in the end of list
 	T remove_first(); // remove the last value in the beginning of list
 	T remove_last(); // remove the last value in the end of list
+	T remove(T value); // remove the last value in the end of list
 	int get_number_nodes(); // return the number of nodes in the list
+	void remove_number_nodes(); 
 	virtual SimpleNode<T>* get_root(); // get root node
+	virtual void reset(); 
 	bool is_empty(); // check if the stack is empty
 	bool isFull(); // check if the stack is full
 	SimpleNode<T>* search(T content); // search if exists
@@ -29,8 +32,8 @@ public:
 	virtual void test(); // method to test
 
 protected:
-	SimpleNode<T>* root; // first position of queue to be retired
 	int number_nodes; // number of nodes in the list
+	SimpleNode<T>* root; // first position of queue to be retired
 
 	void deleteNode(SimpleNode<T>* node); // delete the node deallocating memory
 	SimpleNode<T>* createNode(T value); // create the node allocating memory
@@ -169,6 +172,42 @@ T LinkedList<T>::remove_last()
 	return value;
 }
 
+template<class T>
+T LinkedList<T>::remove(T value)
+{
+	// get next node to be explored
+	SimpleNode<T>* node = this->root;
+	SimpleNode<T>* aux_node = NULL;
+	SimpleNode<T>* previous_node = NULL;
+
+	// finding node
+	while (node != NULL)
+	{
+		if (this->compare(node->content, value)) {
+			break;
+		}
+
+		previous_node = node;
+		node = node->next_node;
+	}
+
+	// deleting node
+	aux_node = node;
+	if (previous_node == NULL) { // root node
+		this->root = node->next_node;
+	}
+	else {
+		if (node->next_node == NULL)
+			previous_node->next_node = NULL;
+		else
+			previous_node->next_node = node->next_node;
+	}
+
+	delete node;
+
+	return aux_node->content;
+}
+
 template <class T>
 void LinkedList<T>::print()
 {
@@ -180,10 +219,23 @@ int LinkedList<T>::get_number_nodes()
 	return this->number_nodes;
 }
 
+template<class T>
+void LinkedList<T>::remove_number_nodes()
+{
+	this->number_nodes--;
+}
+
 template <class T>
 SimpleNode<T>* LinkedList<T>::get_root()
 {
 	return root;
+}
+
+template<class T>
+void LinkedList<T>::reset()
+{
+	this->number_nodes = 0;
+	this->root = NULL;
 }
 
 template<class T>

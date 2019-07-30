@@ -15,25 +15,28 @@ class Tree
 {
 
 protected:
-	int new_id();
+	TreeNode<T>* root;
 	int id;
 	int g_score;
 	DynamicQueue<TreeNode<T>*>* queue_bfs_list;
 	DynamicStack<TreeNode<T>*>* stack_dfs_list;
+	LinkedList<TreeNode<T>*>* a_star_list;
 	DynamicQueue<T>* explored_list;
-
-public:
-	TreeNode<T>* root;
-
-	Tree();
-	~Tree();
-	void remove_cascate(T content);
+	
+	int new_id();
 	virtual void set_child_properties(TreeNode<T>* node, T goal);
 	virtual bool compare(T first, T second);
 	virtual int manhattan_distance(T test, T goal);
+	virtual TreeNode<T>* a_star_get_next_node_to_explore();
+
+public:
+	Tree();
+	~Tree();
+	void remove_cascate(T content);
 	virtual TreeNode<T>* search_bfs(T content);
 	virtual TreeNode<T>* search_dfs(T content);
 	virtual TreeNode<T>* search_a_star(T content);
+	virtual TreeNode<T>* search_hill_climbing(T content);
 	virtual void print_content(T content) = 0;
 	virtual void print_node(TreeNode<T>* node) = 0;
 	virtual void print_node_children(TreeNode<T>* node) = 0;
@@ -41,13 +44,6 @@ public:
 	virtual void print_tree() = 0;
 	virtual void test() = 0;
 };
-
-
-template<class T>
-int Tree<T>::new_id()
-{
-	return this->id++;
-}
 
 template <class T>
 Tree<T>::Tree()
@@ -58,6 +54,7 @@ Tree<T>::Tree()
 	this->queue_bfs_list = new DynamicQueue<TreeNode<T>*>();
 	this->stack_dfs_list = new DynamicStack<TreeNode<T>*>();
 	this->explored_list = new DynamicQueue<T>();
+	this->a_star_list = new LinkedList<TreeNode<T>*>();
 }
 
 template<class T>
@@ -69,6 +66,12 @@ Tree<T>::~Tree()
 	this->explored_list->clear();
 	this->stack_dfs_list->clear();
 	this->queue_bfs_list->clear();
+}
+
+template<class T>
+int Tree<T>::new_id()
+{
+	return this->id++;
 }
 
 template<class T>
@@ -181,10 +184,11 @@ template<class T>
 TreeNode<T>* Tree<T>::search_a_star(T content)
 {
 	this->explored_list->clear();
-	TreeNode<T>* node = root;
+	this->a_star_list->add_last(this->root);
 
-	while (node != NULL)
+	while (!this->a_star_list->is_empty())
 	{
+		TreeNode<T>* node = this->a_star_get_next_node_to_explore();
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
@@ -197,7 +201,43 @@ TreeNode<T>* Tree<T>::search_a_star(T content)
 
 			while (child != NULL)
 			{
-				if (this->explored_list->search(child->content->content) == NULL && child->content->f_score <= node->f_score)
+				if (this->explored_list->search(child->content->content) == NULL && this->a_star_list->search(child->content) == NULL)
+				{
+					this->a_star_list->add_last(child->content);
+				}
+
+				child = child->next_node;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+template<class T>
+TreeNode<T>* Tree<T>::search_hill_climbing(T content)
+{
+	this->explored_list->clear();
+	TreeNode<T>* node = root;
+	TreeNode<T>* node_to_validate = node;
+
+	while (node != NULL)
+	{
+		node->explored = true;
+		this->explored_list->enqueue(node->content);
+
+		if (compare(node->content, content))
+			return node;
+
+		// get the neighbors to be explored
+		if (node->has_children()) {
+			SimpleNode<TreeNode<T>*>* child = node->children_nodes->get_root();
+			node_to_validate = node;
+			node = NULL;
+
+			while (child != NULL)
+			{
+				if (this->explored_list->search(child->content->content) == NULL && child->content->f_score <= node_to_validate->f_score)
 				{
 					node = child->content;
 				}
@@ -220,6 +260,34 @@ template<class T>
 int Tree<T>::manhattan_distance(T test, T goal)
 {
 	return 0;
+}
+
+template<class T>
+TreeNode<T>* Tree<T>::a_star_get_next_node_to_explore()
+{
+	TreeNode<T>* value = NULL;
+
+	// get next node to be explored
+	SimpleNode<TreeNode<T>*>* node = this->a_star_list->get_root();
+	SimpleNode<TreeNode<T>*>* best_node = node;
+	SimpleNode<TreeNode<T>*>* previous_node = NULL;
+
+	// finding node
+	while (node != NULL)
+	{
+		if (best_node->content->f_score >= node->content->f_score) {
+			best_node = node;
+		}
+
+		if (node->next_node != NULL)
+			previous_node = node;
+
+		node = node->next_node;
+	}
+
+	value = this->a_star_list->remove(node->content);
+
+	return value;
 }
 
 

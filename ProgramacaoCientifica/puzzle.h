@@ -9,7 +9,15 @@ using namespace std;
 template <class T>
 class Puzzle : public Tree<T> {
 protected:
-	T _goal;
+	T goal_;
+
+	bool search_explored(T content);
+	bool search_queue_bfs(T content);
+	bool search_stack_dfs(T content);
+	bool search_list_a_star(T content);
+	TreeNode<T>* a_star_get_next_node_to_explore() override;
+	virtual bool compare_explored(T first, T second);
+	virtual void create_children_nodes(TreeNode<T>* node) = 0;
 
 public:
 	Puzzle(T goal);
@@ -18,18 +26,13 @@ public:
 	TreeNode<T>* search_bfs(T test) override;
 	TreeNode<T>* search_dfs(T test) override;
 	TreeNode<T>* search_a_star(T test) override;
-	bool search_explored(T content);
-	bool search_queue_bfs(T content);
-	bool search_stack_dfs(T content);
-
-	virtual bool compare_explored(T first, T second);
-	virtual void create_children_nodes(TreeNode<T>* node) = 0;
+	TreeNode<T>* search_hill_climbing(T test) override;
 };
 
 template <class T>
 Puzzle<T>::Puzzle(T goal) : Tree<T>()
 {
-	this->_goal = goal;
+	this->goal_ = goal;
 }
 
 template <class T>
@@ -41,7 +44,7 @@ Puzzle<T>::~Puzzle()
 template <class T>
 TreeNode<T>* Puzzle<T>::search_bfs(T test)
 {
-	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, _goal), 0, this->new_id());
+	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, goal_), 0, this->new_id());
 	this->explored_list->clear();
 	this->queue_bfs_list->enqueue(this->root); // start my queue
 
@@ -51,7 +54,7 @@ TreeNode<T>* Puzzle<T>::search_bfs(T test)
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
-		if (this->compare(node->content, this->_goal))
+		if (this->compare(node->content, this->goal_))
 			return node;
 
 		this->create_children_nodes(node); // create the new neighbours
@@ -78,7 +81,7 @@ TreeNode<T>* Puzzle<T>::search_bfs(T test)
 template <class T>
 TreeNode<T>* Puzzle<T>::search_dfs(T test)
 {
-	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, _goal), 0, this->new_id());
+	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, goal_), 0, this->new_id());
 	this->explored_list->clear();
 	this->stack_dfs_list->push(this->root);
 
@@ -88,7 +91,7 @@ TreeNode<T>* Puzzle<T>::search_dfs(T test)
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
-		if (this->compare(node->content, this->_goal))
+		if (this->compare(node->content, this->goal_))
 			return node;
 
 		this->create_children_nodes(node); // create the new neighbors
@@ -115,16 +118,17 @@ TreeNode<T>* Puzzle<T>::search_dfs(T test)
 template<class T>
 TreeNode<T>* Puzzle<T>::search_a_star(T test)
 {
-	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, _goal), 0, this->new_id());
+	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, goal_), 0, this->new_id());
 	this->explored_list->clear();
-	TreeNode<T>* node = this->root;
+	this->a_star_list->add_last(this->root);
 
-	while (node != NULL)
+	while (!this->a_star_list->is_empty())
 	{
+		TreeNode<T>* node = this->a_star_get_next_node_to_explore();
 		node->explored = true;
-		this->explored_list->enqueue(node->content);
+		this->explored_list->add_last(node->content);
 
-		if (this->compare(node->content, this->_goal))
+		if (this->compare(node->content, this->goal_))
 			return node;
 
 		this->create_children_nodes(node); // create the new neighbors
@@ -135,7 +139,46 @@ TreeNode<T>* Puzzle<T>::search_a_star(T test)
 
 			while (child != NULL)
 			{
-				if (!this->search_explored(child->content->content) && child->content->f_score <= node->f_score)
+				if (!this->search_explored(child->content->content) && !this->search_list_a_star(child->content->content))
+				{
+					this->a_star_list->add_last(child->content);
+				}
+
+				child = child->next_node;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+template<class T>
+TreeNode<T>* Puzzle<T>::search_hill_climbing(T test)
+{
+	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, goal_), 0, this->new_id());
+	this->explored_list->clear();
+	TreeNode<T>* node = this->root;
+	TreeNode<T>* node_to_validate = node;
+
+	while (node != NULL)
+	{
+		node->explored = true;
+		this->explored_list->enqueue(node->content);
+
+		if (this->compare(node->content, this->goal_))
+			return node;
+
+		this->create_children_nodes(node); // create the new neighbors
+
+		// get the neighbors to be explored
+		if (node->has_children()) {
+			SimpleNode<TreeNode<T>*>* child = node->children_nodes->get_root();
+			node_to_validate = node;
+			node = NULL;
+
+			while (child != NULL)
+			{
+				if (!this->search_explored(child->content->content) && child->content->f_score <= node_to_validate->f_score)
 				{
 					node = child->content;
 				}
@@ -197,6 +240,71 @@ bool Puzzle<T>::search_stack_dfs(T content)
 	}
 
 	return false;
+}
+
+template<class T>
+bool Puzzle<T>::search_list_a_star(T content)
+{
+	if (!this->a_star_list->is_empty())
+		return false;
+
+	SimpleNode<TreeNode<T>*>* node = this->a_star_list->get_root();
+
+	// going to the end
+	while (node != NULL)
+	{
+		if (this->compare_explored(node->content->content, content))
+			return true;
+
+		node = node->next_node;
+	}
+
+	return false;
+}
+
+template<class T>
+TreeNode<T>* Puzzle<T>::a_star_get_next_node_to_explore()
+{
+	TreeNode<T>* value = NULL;
+
+	// get next node to be explored
+	SimpleNode<TreeNode<T>*>* root = this->a_star_list->get_root();
+	SimpleNode<TreeNode<T>*>* node = root;
+	SimpleNode<TreeNode<T>*>* best_node = node;
+	SimpleNode<TreeNode<T>*>* previous_best_node = NULL;
+	SimpleNode<TreeNode<T>*>* previous_node = NULL;
+
+	// finding node
+	while (node != NULL)
+	{
+		if (best_node->content->f_score >= node->content->f_score) {
+			previous_best_node = previous_node;
+			best_node = node;
+		}
+
+		if (node->next_node != NULL)
+			previous_node = node;
+
+		node = node->next_node;
+	}
+
+	// deleting node
+	if (previous_best_node == NULL) { // root node
+		value = this->a_star_list->remove_first();
+	}
+	else {
+		if (best_node->next_node == NULL) {
+			value = this->a_star_list->remove_last();
+		}
+		else {
+			previous_best_node->next_node = best_node->next_node;
+			value = best_node->content;
+			delete best_node;
+			this->a_star_list->remove_number_nodes();
+		}
+	}
+
+	return value;
 }
 
 template<class T>

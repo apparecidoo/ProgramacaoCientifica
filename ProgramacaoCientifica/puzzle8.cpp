@@ -62,39 +62,39 @@ void Puzzle8::create_children_nodes(TreeNode<int**>* node)
 			left_move = get_new_node(node);
 			left_move->content[0][0] = left_move->content[0][1];
 			left_move->content[0][1] = 0;
-			this->set_child_properties(left_move, this->_goal);
+			this->set_child_properties(left_move, this->goal_);
 
 			down_move = get_new_node(node);
 			down_move->content[0][0] = down_move->content[1][0];
 			down_move->content[1][0] = 0;
-			this->set_child_properties(down_move, this->_goal);
+			this->set_child_properties(down_move, this->goal_);
 			break;
 		case 1:
 			left_move = get_new_node(node);
 			left_move->content[0][1] = left_move->content[0][0];
 			left_move->content[0][0] = 0;
-			this->set_child_properties(left_move, this->_goal);
+			this->set_child_properties(left_move, this->goal_);
 
 			down_move = get_new_node(node);
 			down_move->content[0][1] = down_move->content[1][1];
 			down_move->content[1][1] = 0;
-			this->set_child_properties(down_move, this->_goal);
+			this->set_child_properties(down_move, this->goal_);
 
 			right_move = get_new_node(node);
 			right_move->content[0][1] = right_move->content[0][2];
 			right_move->content[0][2] = 0;
-			this->set_child_properties(right_move, this->_goal);
+			this->set_child_properties(right_move, this->goal_);
 			break;
 		case 2:
 			left_move = get_new_node(node);
 			left_move->content[0][2] = left_move->content[0][1];
 			left_move->content[0][1] = 0;
-			this->set_child_properties(left_move, this->_goal);
+			this->set_child_properties(left_move, this->goal_);
 
 			down_move = get_new_node(node);
 			down_move->content[0][2] = down_move->content[1][2];
 			down_move->content[1][2] = 0;
-			this->set_child_properties(down_move, this->_goal);
+			this->set_child_properties(down_move, this->goal_);
 			break;
 		default:
 			break;
@@ -107,54 +107,54 @@ void Puzzle8::create_children_nodes(TreeNode<int**>* node)
 			up_move = get_new_node(node);
 			up_move->content[1][0] = up_move->content[0][0];
 			up_move->content[0][0] = 0;
-			this->set_child_properties(up_move, this->_goal);
+			this->set_child_properties(up_move, this->goal_);
 
 			down_move = get_new_node(node);
 			down_move->content[1][0] = down_move->content[2][0];
 			down_move->content[2][0] = 0;
-			this->set_child_properties(down_move, this->_goal);
+			this->set_child_properties(down_move, this->goal_);
 
 			right_move = get_new_node(node);
 			right_move->content[1][0] = right_move->content[1][1];
 			right_move->content[1][1] = 0;
-			this->set_child_properties(right_move, this->_goal);
+			this->set_child_properties(right_move, this->goal_);
 			break;
 		case 1:
 			left_move = get_new_node(node);
 			left_move->content[1][1] = left_move->content[1][0];
 			left_move->content[1][0] = 0;
-			this->set_child_properties(left_move, this->_goal);
+			this->set_child_properties(left_move, this->goal_);
 
 			down_move = get_new_node(node);
 			down_move->content[1][1] = down_move->content[2][1];
 			down_move->content[2][1] = 0;
-			this->set_child_properties(down_move, this->_goal);
+			this->set_child_properties(down_move, this->goal_);
 
 			right_move = get_new_node(node);
 			right_move->content[1][1] = right_move->content[1][2];
 			right_move->content[1][2] = 0;
-			this->set_child_properties(right_move, this->_goal);
+			this->set_child_properties(right_move, this->goal_);
 
 			up_move = get_new_node(node);
 			up_move->content[1][1] = up_move->content[0][1];
 			up_move->content[0][1] = 0;
-			this->set_child_properties(up_move, this->_goal);
+			this->set_child_properties(up_move, this->goal_);
 			break;
 		case 2:
 			left_move = get_new_node(node);
 			left_move->content[1][2] = left_move->content[1][1];
 			left_move->content[1][1] = 0;
-			this->set_child_properties(left_move, this->_goal);
+			this->set_child_properties(left_move, this->goal_);
 
 			down_move = get_new_node(node);
 			down_move->content[1][2] = down_move->content[2][2];
 			down_move->content[2][2] = 0;
-			this->set_child_properties(down_move, this->_goal);
+			this->set_child_properties(down_move, this->goal_);
 
 			up_move = get_new_node(node);
 			up_move->content[1][2] = up_move->content[0][2];
 			up_move->content[0][2] = 0;
-			this->set_child_properties(up_move, this->_goal);
+			this->set_child_properties(up_move, this->goal_);
 
 			break;
 		default:
@@ -168,39 +168,39 @@ void Puzzle8::create_children_nodes(TreeNode<int**>* node)
 			up_move = get_new_node(node);
 			up_move->content[2][0] = up_move->content[1][0];
 			up_move->content[1][0] = 0;
-			this->set_child_properties(up_move, this->_goal);
+			this->set_child_properties(up_move, this->goal_);
 
 			right_move = get_new_node(node);
 			right_move->content[2][0] = right_move->content[2][1];
 			right_move->content[2][1] = 0;
-			this->set_child_properties(right_move, this->_goal);
+			this->set_child_properties(right_move, this->goal_);
 			break;
 		case 1:
 			left_move = get_new_node(node);
 			left_move->content[2][1] = left_move->content[2][0];
 			left_move->content[2][0] = 0;
-			this->set_child_properties(left_move, this->_goal);
+			this->set_child_properties(left_move, this->goal_);
 
 			up_move = get_new_node(node);
 			up_move->content[2][1] = up_move->content[1][1];
 			up_move->content[1][1] = 0;
-			this->set_child_properties(up_move, this->_goal);
+			this->set_child_properties(up_move, this->goal_);
 
 			right_move = get_new_node(node);
 			right_move->content[2][1] = right_move->content[2][2];
 			right_move->content[2][2] = 0;
-			this->set_child_properties(right_move, this->_goal);
+			this->set_child_properties(right_move, this->goal_);
 			break;
 		case 2:
 			left_move = get_new_node(node);
 			left_move->content[2][2] = left_move->content[2][1];
 			left_move->content[2][1] = 0;
-			this->set_child_properties(left_move, this->_goal);
+			this->set_child_properties(left_move, this->goal_);
 
 			down_move = get_new_node(node);
 			down_move->content[2][2] = down_move->content[1][2];
 			down_move->content[1][2] = 0;
-			this->set_child_properties(down_move, this->_goal);
+			this->set_child_properties(down_move, this->goal_);
 			break;
 		default:
 			break;
