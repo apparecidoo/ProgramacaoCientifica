@@ -18,7 +18,11 @@ public:
 	TreeNode<T>* search_bfs(T test) override;
 	TreeNode<T>* search_dfs(T test) override;
 	TreeNode<T>* search_a_star(T test) override;
+	bool search_explored(T content);
+	bool search_queue_bfs(T content);
+	bool search_stack_dfs(T content);
 
+	virtual bool compare_explored(T first, T second);
 	virtual void create_children_nodes(TreeNode<T>* node) = 0;
 };
 
@@ -45,12 +49,12 @@ TreeNode<T>* Puzzle<T>::search_bfs(T test)
 	{
 		TreeNode<T>* node = this->queue_bfs_list->dequeue();
 		node->explored = true;
-		this->explored_list->add_first(node);
+		this->explored_list->enqueue(node->content);
 
 		if (this->compare(node->content, this->_goal))
 			return node;
 
-		this->create_children_nodes(node); // create the new neighbors
+		this->create_children_nodes(node); // create the new neighbours
 
 		// get the neighbors to be explored
 		if (node->has_children()) {
@@ -58,7 +62,7 @@ TreeNode<T>* Puzzle<T>::search_bfs(T test)
 
 			while (child != NULL)
 			{
-				if (this->explored_list->search(child->content) == NULL && this->queue_bfs_list->search(child->content) == NULL)
+				if (!this->search_explored(child->content->content) && !this->search_queue_bfs(child->content->content)) // cannot contains in the explored list and list to be explored
 				{
 					this->queue_bfs_list->enqueue(child->content);
 				}
@@ -82,7 +86,7 @@ TreeNode<T>* Puzzle<T>::search_dfs(T test)
 	{
 		TreeNode<T>* node = this->stack_dfs_list->pop();
 		node->explored = true;
-		this->explored_list->add_first(node);
+		this->explored_list->enqueue(node->content);
 
 		if (this->compare(node->content, this->_goal))
 			return node;
@@ -95,7 +99,7 @@ TreeNode<T>* Puzzle<T>::search_dfs(T test)
 
 			while (child != NULL)
 			{
-				if (this->explored_list->search(child->content) == NULL && this->stack_dfs_list->search(child->content) == NULL)
+				if (!this->search_explored(child->content->content) && !this->search_stack_dfs(child->content->content)) // cannot contains in the explored list and list to be explored
 				{
 					this->stack_dfs_list->push(child->content);
 				}
@@ -118,7 +122,7 @@ TreeNode<T>* Puzzle<T>::search_a_star(T test)
 	while (node != NULL)
 	{
 		node->explored = true;
-		this->explored_list->add_first(node);
+		this->explored_list->enqueue(node->content);
 
 		if (this->compare(node->content, this->_goal))
 			return node;
@@ -131,7 +135,7 @@ TreeNode<T>* Puzzle<T>::search_a_star(T test)
 
 			while (child != NULL)
 			{
-				if (this->explored_list->search(child->content) == NULL && child->content->f_score <= node->f_score)
+				if (!this->search_explored(child->content->content) && child->content->f_score <= node->f_score)
 				{
 					node = child->content;
 				}
@@ -142,6 +146,63 @@ TreeNode<T>* Puzzle<T>::search_a_star(T test)
 	}
 
 	return NULL;
+}
+
+template<class T>
+bool Puzzle<T>::search_explored(T content)
+{
+	SimpleNode<T>* node = this->explored_list->get_root();
+
+	// going to the end
+	while (node != NULL)
+	{
+		if (this->compare_explored(node->content, content))
+			return true;
+
+		node = node->next_node;
+	}
+
+	return false;
+}
+
+template<class T>
+bool Puzzle<T>::search_queue_bfs(T content)
+{
+	SimpleNode<TreeNode<T>*>* node = this->queue_bfs_list->get_root();
+
+	// going to the end
+	while (node != NULL)
+	{
+		if (this->compare_explored(node->content->content, content))
+			return true;
+
+		node = node->next_node;
+	}
+
+	return false;
+}
+
+template<class T>
+bool Puzzle<T>::search_stack_dfs(T content)
+{
+	SimpleNode<TreeNode<T>*>* node = this->stack_dfs_list->get_root();
+
+	// going to the end
+	while (node != NULL)
+	{
+		if (this->compare_explored(node->content->content, content))
+			return true;
+
+		node = node->next_node;
+	}
+
+	return false;
+}
+
+template<class T>
+bool Puzzle<T>::compare_explored(T first, T second)
+{
+	return first == second;
 }
 
 

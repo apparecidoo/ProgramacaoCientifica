@@ -20,7 +20,7 @@ protected:
 	int g_score;
 	DynamicQueue<TreeNode<T>*>* queue_bfs_list;
 	DynamicStack<TreeNode<T>*>* stack_dfs_list;
-	DynamicQueue<TreeNode<T>*>* explored_list;
+	DynamicQueue<T>* explored_list;
 
 public:
 	TreeNode<T>* root;
@@ -57,7 +57,7 @@ Tree<T>::Tree()
 	this->id = 1;
 	this->queue_bfs_list = new DynamicQueue<TreeNode<T>*>();
 	this->stack_dfs_list = new DynamicStack<TreeNode<T>*>();
-	this->explored_list = new DynamicQueue<TreeNode<T>*>();
+	this->explored_list = new DynamicQueue<T>();
 }
 
 template<class T>
@@ -119,7 +119,7 @@ TreeNode<T>* Tree<T>::search_bfs(T content)
 	{
 		TreeNode<T>* node = this->queue_bfs_list->dequeue();
 		node->explored = true;
-		this->explored_list->enqueue(node);
+		this->explored_list->enqueue(node->content);
 
 		if (compare(node->content, content))
 			return node;
@@ -130,7 +130,7 @@ TreeNode<T>* Tree<T>::search_bfs(T content)
 
 			while (child != NULL)
 			{
-				if (this->explored_list->search(child->content) == NULL && this->queue_bfs_list->search(child->content) == NULL)
+				if (this->explored_list->search(child->content->content) == NULL && this->queue_bfs_list->search(child->content) == NULL)
 				{
 					this->queue_bfs_list->enqueue(child->content);
 				}
@@ -153,7 +153,7 @@ TreeNode<T>* Tree<T>::search_dfs(T content)
 	{
 		TreeNode<T>* node = this->stack_dfs_list->pop();
 		node->explored = true;
-		this->explored_list->enqueue(node);
+		this->explored_list->enqueue(node->content);
 
 		if (compare(node->content, content))
 			return node;
@@ -164,7 +164,7 @@ TreeNode<T>* Tree<T>::search_dfs(T content)
 
 			while (child != NULL)
 			{
-				if (this->explored_list->search(child->content) == NULL && this->stack_dfs_list->search(child->content) == NULL)
+				if (this->explored_list->search(child->content->content) == NULL && this->stack_dfs_list->search(child->content) == NULL)
 				{
 					stack_dfs_list->push(child->content);
 				}
@@ -186,7 +186,7 @@ TreeNode<T>* Tree<T>::search_a_star(T content)
 	while (node != NULL)
 	{
 		node->explored = true;
-		this->explored_list->enqueue(node);
+		this->explored_list->enqueue(node->content);
 
 		if (compare(node->content, content))
 			return node;
@@ -197,7 +197,7 @@ TreeNode<T>* Tree<T>::search_a_star(T content)
 
 			while (child != NULL)
 			{
-				if (this->explored_list->search(child->content) == NULL && child->content->f_score <= node->f_score)
+				if (this->explored_list->search(child->content->content) == NULL && child->content->f_score <= node->f_score)
 				{
 					node = child->content;
 				}

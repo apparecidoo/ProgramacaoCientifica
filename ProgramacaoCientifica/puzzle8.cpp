@@ -12,6 +12,7 @@ Puzzle8::~Puzzle8()
 
 bool Puzzle8::compare(int** first, int** second)
 {
+
 	for (int i = 0; i < SIZE; i++)
 	{
 		for (int j = 0; j < SIZE; j++)
@@ -209,7 +210,7 @@ void Puzzle8::create_children_nodes(TreeNode<int**>* node)
 		break;
 	}
 
-	cout << "------------ Interation ------------" << endl << endl;
+	cout << "------------ Interaction ------------" << endl << endl;
 	cout << "Node" << endl;
 	this->print_node(node);
 	cout << "---- Children" << endl;
@@ -290,6 +291,11 @@ void Puzzle8::print_tree()
 void Puzzle8::test()
 {
 	throw CustomException("test not implemented");
+}
+
+bool Puzzle8::compare_explored(int ** first, int ** second)
+{
+	return this->compare(first, second);
 }
 
 void Puzzle8::print_content(int ** content)

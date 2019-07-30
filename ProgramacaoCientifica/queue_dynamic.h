@@ -16,6 +16,7 @@ public:
 	T dequeue(); // remove the last value in the queue
 	void test() override;
 	void print() override;
+	SimpleNode<T>* get_root() override; // get root node
 };
 
 template <class T>
@@ -52,6 +53,12 @@ template <class T>
 void DynamicQueue<T>::print()
 {
 
+}
+
+template<class T>
+SimpleNode<T>* DynamicQueue<T>::get_root()
+{
+	return this->root;
 }
 
 
