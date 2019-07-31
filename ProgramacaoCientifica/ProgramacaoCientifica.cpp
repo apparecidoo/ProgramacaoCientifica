@@ -20,6 +20,10 @@ int main()
 	puzzle_test[1] = new int[3]{ 4, 0, 5 };
 	puzzle_test[2] = new int[3]{ 7, 8, 6 };*/
 
+	/*puzzle_test[0] = new int[3]{ 7, 1, 6 };
+	puzzle_test[1] = new int[3]{ 8, 2, 3 };
+	puzzle_test[2] = new int[3]{ 4, 0, 5 };*/
+
 	int** goal_test = new int*[3];
 	goal_test[0] = new int[3]{ 1, 2, 3 };
 	goal_test[1] = new int[3]{ 4, 5, 6 };

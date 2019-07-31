@@ -283,11 +283,6 @@ TreeNode<int**>* Puzzle8::get_new_node(TreeNode<int**>* node)
 	return new_node;
 }
 
-void Puzzle8::print_tree()
-{
-	this->print_node_children(this->root);
-}
-
 void Puzzle8::test()
 {
 	throw CustomException("test not implemented");
@@ -296,6 +291,11 @@ void Puzzle8::test()
 bool Puzzle8::compare_explored(int ** first, int ** second)
 {
 	return this->compare(first, second);
+}
+
+void Puzzle8::print_tree()
+{
+	this->print_node_children(this->root);
 }
 
 void Puzzle8::print_content(int ** content)

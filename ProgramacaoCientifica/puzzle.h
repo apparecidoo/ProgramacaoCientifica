@@ -11,13 +11,13 @@ class Puzzle : public Tree<T> {
 protected:
 	T goal_;
 
-	bool search_explored(T content);
-	bool search_queue_bfs(T content);
-	bool search_stack_dfs(T content);
-	bool search_list_a_star(T content);
+	bool search_list_explored(T content); // search in the explored node list
+	bool search_list_queue_bfs(T content); // search in the node list used in the breadth first search
+	bool search_list_stack_dfs(T content); // search in the node list used in the depth first search
+	bool search_list_a_star(T content); // search in the node list used in the A* search
 	TreeNode<T>* a_star_get_next_node_to_explore() override;
-	virtual bool compare_explored(T first, T second);
-	virtual void create_children_nodes(TreeNode<T>* node) = 0;
+	virtual bool compare_explored(T first, T second); // compare two contents
+	virtual void create_children_nodes(TreeNode<T>* node) = 0; // create new nodes based in his parent
 
 public:
 	Puzzle(T goal);
@@ -54,10 +54,10 @@ TreeNode<T>* Puzzle<T>::search_bfs(T test)
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
-		if (this->compare(node->content, this->goal_))
+		if (this->compare(node->content, this->goal_)) // compare the current node with the goal
 			return node;
 
-		this->create_children_nodes(node); // create the new neighbours
+		this->create_children_nodes(node); // create the new neighbors
 
 		// get the neighbors to be explored
 		if (node->has_children()) {
@@ -65,7 +65,8 @@ TreeNode<T>* Puzzle<T>::search_bfs(T test)
 
 			while (child != NULL)
 			{
-				if (!this->search_explored(child->content->content) && !this->search_queue_bfs(child->content->content)) // cannot contains in the explored list and list to be explored
+				// check if was not explored and is not in the stack to be explored
+				if (!this->search_list_explored(child->content->content) && !this->search_list_queue_bfs(child->content->content)) // cannot contains in the explored list and list to be explored
 				{
 					this->queue_bfs_list->enqueue(child->content);
 				}
@@ -91,7 +92,7 @@ TreeNode<T>* Puzzle<T>::search_dfs(T test)
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
-		if (this->compare(node->content, this->goal_))
+		if (this->compare(node->content, this->goal_)) // compare the current node with the goal
 			return node;
 
 		this->create_children_nodes(node); // create the new neighbors
@@ -102,7 +103,8 @@ TreeNode<T>* Puzzle<T>::search_dfs(T test)
 
 			while (child != NULL)
 			{
-				if (!this->search_explored(child->content->content) && !this->search_stack_dfs(child->content->content)) // cannot contains in the explored list and list to be explored
+				// check if was not explored and is not in the stack to be explored
+				if (!this->search_list_explored(child->content->content) && !this->search_list_stack_dfs(child->content->content)) // cannot contains in the explored list and list to be explored
 				{
 					this->stack_dfs_list->push(child->content);
 				}
@@ -128,7 +130,7 @@ TreeNode<T>* Puzzle<T>::search_a_star(T test)
 		node->explored = true;
 		this->explored_list->add_last(node->content);
 
-		if (this->compare(node->content, this->goal_))
+		if (this->compare(node->content, this->goal_)) // compare the current node with the goal
 			return node;
 
 		this->create_children_nodes(node); // create the new neighbors
@@ -139,7 +141,8 @@ TreeNode<T>* Puzzle<T>::search_a_star(T test)
 
 			while (child != NULL)
 			{
-				if (!this->search_explored(child->content->content) && !this->search_list_a_star(child->content->content))
+				// check if was not explored and is not in the stack to be explored
+				if (!this->search_list_explored(child->content->content) && !this->search_list_a_star(child->content->content))
 				{
 					this->a_star_list->add_last(child->content);
 				}
@@ -165,7 +168,7 @@ TreeNode<T>* Puzzle<T>::search_hill_climbing(T test)
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
-		if (this->compare(node->content, this->goal_))
+		if (this->compare(node->content, this->goal_)) // compare the current node with the goal
 			return node;
 
 		this->create_children_nodes(node); // create the new neighbors
@@ -178,7 +181,8 @@ TreeNode<T>* Puzzle<T>::search_hill_climbing(T test)
 
 			while (child != NULL)
 			{
-				if (!this->search_explored(child->content->content) && child->content->f_score <= node_to_validate->f_score)
+				// check if was not explored and is not in the stack to be explored
+				if (!this->search_list_explored(child->content->content) && child->content->f_score <= node_to_validate->f_score)
 				{
 					node = child->content;
 				}
@@ -192,7 +196,7 @@ TreeNode<T>* Puzzle<T>::search_hill_climbing(T test)
 }
 
 template<class T>
-bool Puzzle<T>::search_explored(T content)
+bool Puzzle<T>::search_list_explored(T content)
 {
 	SimpleNode<T>* node = this->explored_list->get_root();
 
@@ -209,7 +213,7 @@ bool Puzzle<T>::search_explored(T content)
 }
 
 template<class T>
-bool Puzzle<T>::search_queue_bfs(T content)
+bool Puzzle<T>::search_list_queue_bfs(T content)
 {
 	SimpleNode<TreeNode<T>*>* node = this->queue_bfs_list->get_root();
 
@@ -226,7 +230,7 @@ bool Puzzle<T>::search_queue_bfs(T content)
 }
 
 template<class T>
-bool Puzzle<T>::search_stack_dfs(T content)
+bool Puzzle<T>::search_list_stack_dfs(T content)
 {
 	SimpleNode<TreeNode<T>*>* node = this->stack_dfs_list->get_root();
 

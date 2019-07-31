@@ -12,20 +12,20 @@ class TreeNode
 {
 
 public:
-	TreeNode<T>* parent;
-	DynamicQueue<TreeNode<T>*>* children_nodes;
+	TreeNode<T>* parent; // pointer node to his parent
+	DynamicQueue<TreeNode<T>*>* children_nodes; // list of children
 
-	int id;
+	int id; // identification of node, this is unique
 	int h_score; // number of misplaced tiles
 	int g_score; // node height from tree
-	int f_score;
-	bool explored;
+	int f_score; // evaluation function
+	bool explored; // if the node was explored or not
 	T content; // value of the node
 
 	TreeNode(T value, TreeNode<T>* parent, int h_score = 0, int g_score = 0, int id = 0);
-	bool has_children();
-	bool has_child_to_explore();
-	TreeNode<T>* get_next_to_explore();	
+	bool has_children(); // check if has children
+	bool has_child_to_explore(); // check if had any child to be explored
+	TreeNode<T>* get_next_to_explore();	 // get the next node that was not explored
 };
 
 

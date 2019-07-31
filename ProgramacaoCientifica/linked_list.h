@@ -19,9 +19,9 @@ public:
 	T remove_last(); // remove the last value in the end of list
 	T remove(T value); // remove the last value in the end of list
 	int get_number_nodes(); // return the number of nodes in the list
-	void remove_number_nodes(); 
+	void remove_number_nodes();
 	virtual SimpleNode<T>* get_root(); // get root node
-	virtual void reset(); 
+	virtual void reset();
 	bool is_empty(); // check if the stack is empty
 	bool isFull(); // check if the stack is full
 	SimpleNode<T>* search(T content); // search if exists
@@ -91,7 +91,7 @@ void LinkedList<T>::add_last(T value)
 				throw CustomException("**The list is full.");
 
 			SimpleNode<T>* node = this->root;
-			
+
 			// going to the end
 			while (node->next_node != NULL)
 			{
@@ -146,11 +146,9 @@ T LinkedList<T>::remove_last()
 		SimpleNode<T>* node = this->root;
 		SimpleNode<T>* previous_node = NULL;
 
-		while (node != NULL)
+		while (node->next_node != NULL)
 		{
-			if (node->next_node != NULL)
-				previous_node = node; // if was the root, then we need to maintain NULL on previous_node
-
+			previous_node = node; // if was the root, then we need to maintain NULL on previous_node
 			node = node->next_node; // got to next node
 		}
 

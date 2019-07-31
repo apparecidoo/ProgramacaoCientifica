@@ -18,30 +18,30 @@ protected:
 	TreeNode<T>* root;
 	int id;
 	int g_score;
-	DynamicQueue<TreeNode<T>*>* queue_bfs_list;
-	DynamicStack<TreeNode<T>*>* stack_dfs_list;
-	LinkedList<TreeNode<T>*>* a_star_list;
-	DynamicQueue<T>* explored_list;
+	DynamicQueue<TreeNode<T>*>* queue_bfs_list; // queue list used for breadth first search
+	DynamicStack<TreeNode<T>*>* stack_dfs_list; // stack list used for depth first search
+	LinkedList<TreeNode<T>*>* a_star_list; // queue list used for A*
+	DynamicQueue<T>* explored_list; // list of explored nodes
 	
-	int new_id();
-	virtual void set_child_properties(TreeNode<T>* node, T goal);
-	virtual bool compare(T first, T second);
-	virtual int manhattan_distance(T test, T goal);
-	virtual TreeNode<T>* a_star_get_next_node_to_explore();
+	int new_id(); // get a new id
+	virtual void set_child_properties(TreeNode<T>* node, T goal); // set properties for child of node
+	virtual bool compare(T first, T second); // comparing two contents
+	virtual int manhattan_distance(T test, T goal); // calculate manhattan distance
+	virtual TreeNode<T>* a_star_get_next_node_to_explore(); // method to get the next node to be explore in the search A*
 
 public:
 	Tree();
 	~Tree();
-	void remove_cascate(T content);
-	virtual TreeNode<T>* search_bfs(T content);
-	virtual TreeNode<T>* search_dfs(T content);
-	virtual TreeNode<T>* search_a_star(T content);
-	virtual TreeNode<T>* search_hill_climbing(T content);
-	virtual void print_content(T content) = 0;
-	virtual void print_node(TreeNode<T>* node) = 0;
-	virtual void print_node_children(TreeNode<T>* node) = 0;
-	virtual void print_children(TreeNode<T>* node) = 0;
-	virtual void print_tree() = 0;
+	void remove_cascate(T content); // remove the node and his children
+	virtual TreeNode<T>* search_bfs(T content); // search using breadth first search
+	virtual TreeNode<T>* search_dfs(T content); // search using depth first search
+	virtual TreeNode<T>* search_a_star(T content); // search using A*
+	virtual TreeNode<T>* search_hill_climbing(T content); // search using hill climbing
+	virtual void print_content(T content) = 0; // print the node content
+	virtual void print_node(TreeNode<T>* node) = 0; // print the node properties and content
+	virtual void print_node_children(TreeNode<T>* node) = 0; // print the node and his children
+	virtual void print_children(TreeNode<T>* node) = 0; // print the node children
+	virtual void print_tree() = 0; // print the tree
 	virtual void test() = 0;
 };
 
@@ -101,6 +101,7 @@ void Tree<T>::remove_cascate(T content)
 
 			while (child != NULL)
 			{
+				// check if was not explored and is not in the stack to be explored
 				if (!child->content->explored && this->stack_dfs_list->search(child->content) == NULL)
 				{
 					stack_dfs_list->push(child->content);
@@ -124,7 +125,7 @@ TreeNode<T>* Tree<T>::search_bfs(T content)
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
-		if (compare(node->content, content))
+		if (compare(node->content, content)) // check if is the response
 			return node;
 
 		// get the neighbors to be explored
@@ -133,6 +134,7 @@ TreeNode<T>* Tree<T>::search_bfs(T content)
 
 			while (child != NULL)
 			{
+				// check if was not explored and is not in the stack to be explored
 				if (this->explored_list->search(child->content->content) == NULL && this->queue_bfs_list->search(child->content) == NULL)
 				{
 					this->queue_bfs_list->enqueue(child->content);
@@ -158,7 +160,7 @@ TreeNode<T>* Tree<T>::search_dfs(T content)
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
-		if (compare(node->content, content))
+		if (compare(node->content, content)) // check if is the response
 			return node;
 
 		// get the neighbors to be explored
@@ -167,6 +169,7 @@ TreeNode<T>* Tree<T>::search_dfs(T content)
 
 			while (child != NULL)
 			{
+				// check if was not explored and is not in the stack to be explored
 				if (this->explored_list->search(child->content->content) == NULL && this->stack_dfs_list->search(child->content) == NULL)
 				{
 					stack_dfs_list->push(child->content);
@@ -192,7 +195,7 @@ TreeNode<T>* Tree<T>::search_a_star(T content)
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
-		if (compare(node->content, content))
+		if (compare(node->content, content)) // check if is the response
 			return node;
 
 		// get the neighbors to be explored
@@ -201,6 +204,7 @@ TreeNode<T>* Tree<T>::search_a_star(T content)
 
 			while (child != NULL)
 			{
+				// check if was not explored and is not in the stack to be explored
 				if (this->explored_list->search(child->content->content) == NULL && this->a_star_list->search(child->content) == NULL)
 				{
 					this->a_star_list->add_last(child->content);
@@ -226,7 +230,7 @@ TreeNode<T>* Tree<T>::search_hill_climbing(T content)
 		node->explored = true;
 		this->explored_list->enqueue(node->content);
 
-		if (compare(node->content, content))
+		if (compare(node->content, content)) // check if is the response
 			return node;
 
 		// get the neighbors to be explored
@@ -237,6 +241,7 @@ TreeNode<T>* Tree<T>::search_hill_climbing(T content)
 
 			while (child != NULL)
 			{
+				// check if was not explored and is not in the stack to be explored
 				if (this->explored_list->search(child->content->content) == NULL && child->content->f_score <= node_to_validate->f_score)
 				{
 					node = child->content;
