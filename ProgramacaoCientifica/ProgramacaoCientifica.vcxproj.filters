@@ -42,11 +42,11 @@
     <ClCompile Include="puzzle8.cpp">
       <Filter>Source Files\algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="puzzle8.cpp">
-      <Filter>Source Files\algorithms</Filter>
-    </ClCompile>
     <ClCompile Include="ProgramacaoCientifica.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="puzzle_type.h">
+      <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,9 +81,6 @@
       <Filter>Header Files\algorithms</Filter>
     </ClInclude>
     <ClInclude Include="tree.h">
-      <Filter>Header Files\algorithms</Filter>
-    </ClInclude>
-    <ClInclude Include="puzzle8.h">
       <Filter>Header Files\algorithms</Filter>
     </ClInclude>
   </ItemGroup>

@@ -22,11 +22,11 @@ protected:
 	DynamicStack<TreeNode<T>*>* stack_dfs_list; // stack list used for depth first search
 	LinkedList<TreeNode<T>*>* a_star_list; // queue list used for A*
 	DynamicQueue<T>* explored_list; // list of explored nodes
-	
-	int new_id(); // get a new id
+
+	int new_id(); // get a new id	
 	virtual void set_child_properties(TreeNode<T>* node, T goal); // set properties for child of node
 	virtual bool compare(T first, T second); // comparing two contents
-	virtual int manhattan_distance(T test, T goal); // calculate manhattan distance
+	virtual int manhattan_distance(T test, T goal) = 0; // calculate manhattan distance
 	virtual TreeNode<T>* a_star_get_next_node_to_explore(); // method to get the next node to be explore in the search A*
 
 public:
@@ -37,12 +37,13 @@ public:
 	virtual TreeNode<T>* search_dfs(T content); // search using depth first search
 	virtual TreeNode<T>* search_a_star(T content); // search using A*
 	virtual TreeNode<T>* search_hill_climbing(T content); // search using hill climbing
-	virtual void print_content(T content) = 0; // print the node content
-	virtual void print_node(TreeNode<T>* node) = 0; // print the node properties and content
-	virtual void print_node_children(TreeNode<T>* node) = 0; // print the node and his children
-	virtual void print_children(TreeNode<T>* node) = 0; // print the node children
-	virtual void print_tree() = 0; // print the tree
-	virtual void test() = 0;
+	void back_tracking(TreeNode<T>* node);
+	virtual void print_content(T content); // print the node content
+	virtual void print_node(TreeNode<T>* node); // print the node properties and content
+	virtual void print_node_children(TreeNode<T>* node); // print the node and his children
+	virtual void print_children(TreeNode<T>* node); // print the node children
+	virtual void print_tree(); // print the tree
+	virtual void test();
 };
 
 template <class T>
@@ -72,6 +73,26 @@ template<class T>
 int Tree<T>::new_id()
 {
 	return this->id++;
+}
+
+template<class T>
+void Tree<T>::back_tracking(TreeNode<T>* node)
+{
+	DynamicStack<TreeNode<T>*>* list = new DynamicStack<TreeNode<T>*>();
+	TreeNode<T>* aux_node = node;
+
+	while (aux_node != NULL)
+	{
+		list->push(aux_node);
+		aux_node = aux_node->parent;
+	}
+
+	while (!list->is_empty())
+	{
+		aux_node = list->pop();
+		cout << "" << endl;
+		this->print_node(aux_node);
+	}
 }
 
 template<class T>
@@ -256,15 +277,45 @@ TreeNode<T>* Tree<T>::search_hill_climbing(T content)
 }
 
 template<class T>
-bool Tree<T>::compare(T first, T second)
+void Tree<T>::print_content(T content)
 {
-	return first == second;
+	throw CustomException("print_content - Method not implemented");
 }
 
 template<class T>
-int Tree<T>::manhattan_distance(T test, T goal)
+void Tree<T>::print_node(TreeNode<T>* node)
 {
-	return 0;
+	throw CustomException("print_node - Method not implemented");
+}
+
+template<class T>
+void Tree<T>::print_node_children(TreeNode<T>* node)
+{
+	throw CustomException("print_node_children - Method not implemented");
+}
+
+template<class T>
+void Tree<T>::print_children(TreeNode<T>* node)
+{
+	throw CustomException("print_children - Method not implemented");
+}
+
+template<class T>
+void Tree<T>::print_tree()
+{
+	this->print_node_children(this->root);
+}
+
+template<class T>
+void Tree<T>::test()
+{
+	throw CustomException("test - Method not implemented");
+}
+
+template<class T>
+bool Tree<T>::compare(T first, T second)
+{
+	return first == second;
 }
 
 template<class T>
