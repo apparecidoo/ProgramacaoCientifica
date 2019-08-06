@@ -31,10 +31,10 @@ int main()
 
 	Puzzle<int**> puzzle = Puzzle<int**>(goal_test, Puzzle8);
 	TreeNode<int**>* node;
-	/*node = NULL;
+	node = NULL;
 	node = puzzle.search_dfs(puzzle_test);
 	cout << ">>>>>>>>>> DFS RESULT <<<<<<<<<" << endl;
-	puzzle.print_node(node);*/
+	puzzle.back_tracking(node);
 
 	node = NULL;
 	node = puzzle.search_bfs(puzzle_test);

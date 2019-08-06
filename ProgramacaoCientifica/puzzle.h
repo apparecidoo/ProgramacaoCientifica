@@ -24,8 +24,8 @@ private:
 	TreeNode<T>* get_copy_node(TreeNode<T>* node); // get copy of node
 	virtual void create_children_nodes(TreeNode<T>* node); // create new nodes based in his parent
 
-	int get_inversions_count(int** arr);
-	bool is_solvable(int** puzzle);
+	int get_inversions_count(T content);
+	bool is_solvable(T puzzle);
 	bool compare(T first, T second) override; // compare two contents
 	int manhattan_distance(T test, T goal) override;
 	TreeNode<T>* a_star_get_next_node_to_explore() override;
@@ -89,6 +89,9 @@ Puzzle<T>::~Puzzle()
 template <class T>
 TreeNode<T>* Puzzle<T>::search_bfs(T test)
 {
+	if (!this->is_solvable(test))
+		throw CustomException("This puzzle is not solvable");
+
 	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, goal_), 0, this->new_id());
 	this->explored_list->clear();
 	this->queue_bfs_list->enqueue(this->root); // start my queue
@@ -127,6 +130,9 @@ TreeNode<T>* Puzzle<T>::search_bfs(T test)
 template <class T>
 TreeNode<T>* Puzzle<T>::search_dfs(T test)
 {
+	if (!this->is_solvable(test))
+		throw CustomException("This puzzle is not solvable");
+
 	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, goal_), 0, this->new_id());
 	this->explored_list->clear();
 	this->stack_dfs_list->push(this->root);
@@ -165,6 +171,9 @@ TreeNode<T>* Puzzle<T>::search_dfs(T test)
 template<class T>
 TreeNode<T>* Puzzle<T>::search_a_star(T test)
 {
+	if (!this->is_solvable(test))
+		throw CustomException("This puzzle is not solvable");
+
 	this->root = new TreeNode<T>(test, NULL, this->manhattan_distance(test, goal_), 0, this->new_id());
 	this->explored_list->clear();
 	this->a_star_list->add_last(this->root);
@@ -361,13 +370,21 @@ bool Puzzle<T>::search_list_a_star(T content)
 }
 
 template<class T>
-int Puzzle<T>::get_inversions_count(int ** arr)
+int Puzzle<T>::get_inversions_count(T content)
 {
-	int inv_count = 0;
-	int compare_num = this->size_puzzle * this->size_puzzle; // 9 for puzzle 8
+	int inv_count = 0, count = 0;
+	int parts_num = this->size_puzzle * this->size_puzzle; // 9 for puzzle 8
+	int* arr = new int[parts_num];
 
-	for (int i = 0; i < compare_num - 1; i++) {
-		for (int j = i + 1; j < compare_num; j++) {
+	for (int i = 0; i < this->size_puzzle; i++) {
+		for (int j = 0; j < this->size_puzzle; j++) {
+			arr[count] = content[i][j];
+				count++;
+		}
+	}
+
+	for (int i = 0; i < parts_num - 1; i++) {
+		for (int j = i + 1; j < parts_num; j++) {
 			if (arr[j] && arr[i] && arr[i] > arr[j]) {
 				inv_count++;
 			}
@@ -378,9 +395,8 @@ int Puzzle<T>::get_inversions_count(int ** arr)
 }
 
 template<class T>
-bool Puzzle<T>::is_solvable(int ** puzzle)
+bool Puzzle<T>::is_solvable(T puzzle)
 {
-	return true;
 	return (this->get_inversions_count(puzzle) % 2 == 0); // return true if inversion count is even.
 }
 
