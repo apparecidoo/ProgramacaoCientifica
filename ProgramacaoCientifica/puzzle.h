@@ -24,6 +24,8 @@ private:
 	TreeNode<T>* get_copy_node(TreeNode<T>* node); // get copy of node
 	virtual void create_children_nodes(TreeNode<T>* node); // create new nodes based in his parent
 
+	int get_inversions_count(int** arr);
+	bool is_solvable(int** puzzle);
 	bool compare(T first, T second) override; // compare two contents
 	int manhattan_distance(T test, T goal) override;
 	TreeNode<T>* a_star_get_next_node_to_explore() override;
@@ -74,6 +76,8 @@ Puzzle<T>::Puzzle(T goal, PuzzleType puzzle_type)
 	default:
 		break;
 	}
+
+	this->goal_ = goal;
 }
 
 template <class T>
@@ -357,6 +361,30 @@ bool Puzzle<T>::search_list_a_star(T content)
 }
 
 template<class T>
+int Puzzle<T>::get_inversions_count(int ** arr)
+{
+	int inv_count = 0;
+	int compare_num = this->size_puzzle * this->size_puzzle; // 9 for puzzle 8
+
+	for (int i = 0; i < compare_num - 1; i++) {
+		for (int j = i + 1; j < compare_num; j++) {
+			if (arr[j] && arr[i] && arr[i] > arr[j]) {
+				inv_count++;
+			}
+		}
+	}
+
+	return inv_count;
+}
+
+template<class T>
+bool Puzzle<T>::is_solvable(int ** puzzle)
+{
+	return true;
+	return (this->get_inversions_count(puzzle) % 2 == 0); // return true if inversion count is even.
+}
+
+template<class T>
 bool Puzzle<T>::compare(T first, T second)
 {
 	for (int i = 0; i < this->size_puzzle; i++)
@@ -498,6 +526,11 @@ TreeNode<T>* Puzzle<T>::move_zero_up(TreeNode<T>* node)
 	move = this->get_copy_node(node);
 	move->content[i][j] = move->content[i - 1][j];
 	move->content[i - 1][j] = 0;
+
+	// check if the node is solvable
+	if (!this->is_solvable(move->content))
+		return NULL;
+
 	this->set_child_properties(move, this->goal_);
 	node->children_nodes->enqueue(move);
 
@@ -538,6 +571,11 @@ TreeNode<T>* Puzzle<T>::move_zero_down(TreeNode<T>* node)
 	move = this->get_copy_node(node);
 	move->content[i][j] = move->content[i + 1][j];
 	move->content[i + 1][j] = 0;
+
+	// check if the node is solvable
+	if (!this->is_solvable(move->content))
+		return NULL;
+
 	this->set_child_properties(move, this->goal_);
 	node->children_nodes->enqueue(move);
 
@@ -578,6 +616,11 @@ TreeNode<T>* Puzzle<T>::move_zero_right(TreeNode<T>* node)
 	move = this->get_copy_node(node);
 	move->content[i][j] = move->content[i][j + 1];
 	move->content[i][j + 1] = 0;
+	
+	// check if the node is solvable
+	if (!this->is_solvable(move->content))
+		return NULL;
+
 	this->set_child_properties(move, this->goal_);
 	node->children_nodes->enqueue(move);
 
@@ -618,6 +661,11 @@ TreeNode<T>* Puzzle<T>::move_zero_left(TreeNode<T>* node)
 	move = this->get_copy_node(node);
 	move->content[i][j] = move->content[i][j - 1];
 	move->content[i][j - 1] = 0;
+	
+	// check if the node is solvable
+	if (!this->is_solvable(move->content))
+		return NULL;
+
 	this->set_child_properties(move, this->goal_);
 	node->children_nodes->enqueue(move);
 
