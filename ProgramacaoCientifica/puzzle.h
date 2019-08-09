@@ -22,7 +22,7 @@ private:
 	TreeNode<T>* move_zero_right(TreeNode<T>* node); // move zerto to right
 	TreeNode<T>* move_zero_left(TreeNode<T>* node); // move zerto to left
 	TreeNode<T>* get_copy_node(TreeNode<T>* node); // get copy of node
-	virtual void create_children_nodes(TreeNode<T>* node); // create new nodes based in his parent
+	void create_children_nodes(TreeNode<T>* node); // create new nodes based in his parent
 
 	int get_inversions_count(T content);
 	bool is_solvable(T puzzle);
@@ -713,7 +713,7 @@ void Puzzle<T>::create_children_nodes(TreeNode<T>* node)
 	TreeNode<T>* down_move = this->move_zero_down(node);
 	TreeNode<T>* right_move = this->move_zero_right(node);
 	TreeNode<T>* up_move = this->move_zero_up(node);
-
+	
 	//if (left_move != NULL) // up
 	//	this->print_node(left_move);
 	//if (down_move != NULL) // right
