@@ -44,6 +44,7 @@ public:
 	void print_node(TreeNode<T>* node) override;
 	void print_node_children(TreeNode<T>* node) override;
 	void print_children(TreeNode<T>* node) override;
+	void test() override;
 };
 
 template <class T>
@@ -296,6 +297,58 @@ void Puzzle<T>::print_children(TreeNode<T>* node)
 			}
 		}
 	}
+}
+
+template<class T>
+void Puzzle<T>::test()
+{
+	std::chrono::time_point<chrono::steady_clock> tStart = std::chrono::high_resolution_clock::now();
+
+	int** puzzle_test = new int*[3];
+	puzzle_test[0] = new int[3]{ 4, 1, 6 };
+	puzzle_test[1] = new int[3]{ 3, 2, 8 };
+	puzzle_test[2] = new int[3]{ 7, 0, 5 };
+
+	int** goal_test = new int*[3];
+	goal_test[0] = new int[3]{ 1, 2, 3 };
+	goal_test[1] = new int[3]{ 4, 5, 6 };
+	goal_test[2] = new int[3]{ 7, 8, 0 };
+	this->goal_ = goal_test;
+	this->size_puzzle = 3;
+	
+	cout << "Puzzle Test" << endl;
+	this->print_content(puzzle_test);
+	cout << "Puzzle Goal" << endl;
+	this->print_content(goal_test);
+
+	tStart = std::chrono::high_resolution_clock::now();
+	TreeNode<int**>* node;
+	node = NULL;
+	node = this->search_dfs(puzzle_test);
+	cout << ">>>>>>>>>> DFS RESULT <<<<<<<<< Time: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - tStart).count() << " microseconds" << endl;
+	this->print_node(node);
+	//this->back_tracking(node);
+
+	tStart = std::chrono::high_resolution_clock::now();
+	node = NULL;
+	node = this->search_bfs(puzzle_test);
+	cout << ">>>>>>>>>> BFS RESULT <<<<<<<<< Time: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - tStart).count() << " microseconds" << endl;
+	this->print_node(node);
+	//this->back_tracking(node);
+
+	tStart = std::chrono::high_resolution_clock::now();
+	node = NULL;
+	node = this->search_a_star(puzzle_test);
+	cout << ">>>>>>>>>> A* RESULT <<<<<<<<< Time: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - tStart).count() << " microseconds" << endl;
+	this->print_node(node);
+	/*this->back_tracking(node);*/
+
+	tStart = std::chrono::high_resolution_clock::now();
+	node = NULL;
+	node = this->search_hill_climbing(puzzle_test);
+	cout << ">>>>>>>>>> HILL CLIMBING RESULT <<<<<<<<< Time: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - tStart).count() << " microseconds" << endl;
+	this->print_node(node);
+	/*this->back_tracking(node);*/
 }
 
 template<class T>

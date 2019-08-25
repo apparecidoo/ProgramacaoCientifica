@@ -1,6 +1,8 @@
 #include "pch.h"
 #include <iostream>
 #include <chrono>
+#include <functional>
+
 #include "custom_exception.h"
 #include "linked_list.h"
 #include "stack.h"
@@ -8,66 +10,22 @@
 #include "queue.h"
 #include "queue_dynamic.h"
 #include "puzzle.h"
+#include "numeric_method.h"
+#include "equations.h"
 
 using namespace std;
+using namespace std::placeholders;
 
 int main()
 {
-	std::chrono::time_point<chrono::steady_clock> tStart = std::chrono::high_resolution_clock::now();
-
-	int** puzzle_test = new int*[3];
-	puzzle_test[0] = new int[3]{ 4, 1, 6 };
-	puzzle_test[1] = new int[3]{ 3, 2, 8 };
-	puzzle_test[2] = new int[3]{ 7, 0, 5 };
-
-	/*puzzle_test[0] = new int[3]{ 1, 2, 3 };
-	puzzle_test[1] = new int[3]{ 4, 0, 5 };
-	puzzle_test[2] = new int[3]{ 7, 8, 6 };*/
-
-	/*puzzle_test[0] = new int[3]{ 7, 1, 6 };
-	puzzle_test[1] = new int[3]{ 8, 2, 3 };
-	puzzle_test[2] = new int[3]{ 4, 0, 5 };*/
-
-	int** goal_test = new int*[3];
-	goal_test[0] = new int[3]{ 1, 2, 3 };
-	goal_test[1] = new int[3]{ 4, 5, 6 };
-	goal_test[2] = new int[3]{ 7, 8, 0 };
-
-	Puzzle<int**> puzzle = Puzzle<int**>(goal_test, Puzzle8);
-
-	cout << "Puzzle Test" << endl;
-	puzzle.print_content(puzzle_test);
-	cout << "Puzzle Goal" << endl;
-	puzzle.print_content(goal_test);
+	Equations* eq = new Equations();
+	NumericMethod num_met = NumericMethod(0, 1, std::bind(&Equations::class_4_f_1, eq, _1));
 	
-	tStart = std::chrono::high_resolution_clock::now();
-	TreeNode<int**>* node;
-	node = NULL;
-	node = puzzle.search_dfs(puzzle_test);
-	cout << ">>>>>>>>>> DFS RESULT <<<<<<<<< Time: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - tStart).count() << " microseconds" << endl;
-	puzzle.print_node(node);
-	//puzzle.back_tracking(node);
+	num_met.test_gradient();
 
-	tStart = std::chrono::high_resolution_clock::now();
-	node = NULL;
-	node = puzzle.search_bfs(puzzle_test);
-	cout << ">>>>>>>>>> BFS RESULT <<<<<<<<< Time: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - tStart).count() << " microseconds" << endl;
-	puzzle.print_node(node);
-	//puzzle.back_tracking(node);
-
-	tStart = std::chrono::high_resolution_clock::now();
-	node = NULL;
-	node = puzzle.search_a_star(puzzle_test);
-	cout << ">>>>>>>>>> A* RESULT <<<<<<<<< Time: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - tStart).count() << " microseconds" << endl;
-	puzzle.print_node(node);
-	/*puzzle.back_tracking(node);*/
-
-	tStart = std::chrono::high_resolution_clock::now();
-	node = NULL;
-	node = puzzle.search_hill_climbing(puzzle_test);
-	cout << ">>>>>>>>>> HILL CLIMBING RESULT <<<<<<<<< Time: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - tStart).count() << " microseconds" << endl;
-	puzzle.print_node(node);
-	/*puzzle.back_tracking(node);*/
+	cout << "Midpoint: " << num_met.Midpoint() << endl;
+	cout << "Trapezoidal: " << num_met.Trapezoidal() << endl;
+	cout << "Simpson: " << num_met.Simpson() << endl;
 
 	system("pause");
 	return 0;

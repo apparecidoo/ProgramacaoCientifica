@@ -152,7 +152,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="custom_exception.h" />
+    <ClInclude Include="equations.h" />
     <ClInclude Include="linked_list.h" />
+    <ClInclude Include="numeric_method.h" />
     <ClInclude Include="tree_node.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="puzzle.h" />
@@ -165,6 +167,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="custom_exception.cpp" />
+    <ClCompile Include="equations.cpp" />
+    <ClCompile Include="numeric_method.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="puzzle_type.h" />
     <ClCompile Include="queue.cpp" />
