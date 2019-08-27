@@ -168,6 +168,7 @@
   <ItemGroup>
     <ClCompile Include="custom_exception.cpp" />
     <ClCompile Include="equations.cpp" />
+    <ClCompile Include="integrate_range.h" />
     <ClCompile Include="numeric_method.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="puzzle_type.h" />

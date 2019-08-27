@@ -24,7 +24,7 @@ private:
 	int number_values; // number of values in the queue
 
 	bool isEmpty(); // check if the stack is empty
-	bool isFull(); // check if the stack is full
+	bool is_full(); // check if the stack is full
 	void addQueue(); // add position analysing a circular queue, using mod %
 	void subQueue(); // subtract position analysing a circular queue, using mod %
 

@@ -13,7 +13,7 @@ Stack::~Stack()
 
 void Stack::push(int value)
 {
-	if (!isFull()) {
+	if (!is_full()) {
 		values[top] = value;
 		top++;
 
@@ -79,7 +79,7 @@ bool Stack::isEmpty()
 	return this->top == 0; // if the number of items is zero then is empty
 }
 
-bool Stack::isFull()
+bool Stack::is_full()
 {
 	return this->top == SIZE; // if the number of items is equal SIZE then is full
 }

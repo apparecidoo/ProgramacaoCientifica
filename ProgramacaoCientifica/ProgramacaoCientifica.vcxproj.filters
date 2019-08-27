@@ -57,6 +57,9 @@
     <ClCompile Include="equations.cpp">
       <Filter>Source Files\helpers</Filter>
     </ClCompile>
+    <ClCompile Include="integrate_range.h">
+      <Filter>Header Files\entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="custom_exception.h">

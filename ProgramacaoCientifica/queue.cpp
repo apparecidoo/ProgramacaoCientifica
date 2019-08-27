@@ -17,7 +17,7 @@ Queue::~Queue()
 
 void Queue::enqueue(int value)
 {
-	if (!isFull()) {
+	if (!is_full()) {
 		values[last_position] = value; // set the value in the array
 		addQueue(); // calculate the next position to be add
 
@@ -87,7 +87,7 @@ bool Queue::isEmpty()
 	return number_values == 0; // if the number of items from queue is zero then is empty
 }
 
-bool Queue::isFull()
+bool Queue::is_full()
 {
 	return number_values == SIZE; // if the number of items from queue is equal SIZE then is full
 }

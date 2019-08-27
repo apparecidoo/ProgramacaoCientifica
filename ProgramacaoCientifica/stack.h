@@ -22,7 +22,7 @@ private:
 	int values[SIZE]; // array of values
 	
 	bool isEmpty(); // check if the stack is empty
-	bool isFull(); // check if the stack is full
+	bool is_full(); // check if the stack is full
 };
 
 #endif

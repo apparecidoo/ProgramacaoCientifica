@@ -23,7 +23,7 @@ public:
 	virtual SimpleNode<T>* get_root(); // get root node
 	virtual void reset();
 	bool is_empty(); // check if the stack is empty
-	bool isFull(); // check if the stack is full
+	bool is_full(); // check if the stack is full
 	SimpleNode<T>* search(T content); // search if exists
 	void clear(); // remove all nodes from list
 
@@ -57,7 +57,7 @@ void LinkedList<T>::add_first(T value)
 {
 	try
 	{
-		if (isFull())
+		if (is_full())
 			throw CustomException("**The list is full.");
 
 		if (is_empty()) {
@@ -87,7 +87,7 @@ void LinkedList<T>::add_last(T value)
 			this->root = createNode(value); // if is the list is empty, add as root
 		}
 		else {
-			if (isFull())
+			if (is_full())
 				throw CustomException("**The list is full.");
 
 			SimpleNode<T>* node = this->root;
@@ -282,7 +282,7 @@ bool LinkedList<T>::is_empty()
 }
 
 template <class T>
-bool LinkedList<T>::isFull()
+bool LinkedList<T>::is_full()
 {
 	try
 	{

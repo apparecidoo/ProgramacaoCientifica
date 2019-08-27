@@ -19,13 +19,13 @@ using namespace std::placeholders;
 int main()
 {
 	Equations* eq = new Equations();
-	NumericMethod num_met = NumericMethod(0, 1, std::bind(&Equations::class_4_f_1, eq, _1));
+	NumericMethod num_met = NumericMethod(0, 1);
 	
-	num_met.test_gradient();
+	//num_met.test_gradient();
 
-	cout << "Midpoint: " << num_met.Midpoint() << endl;
-	cout << "Trapezoidal: " << num_met.Trapezoidal() << endl;
-	cout << "Simpson: " << num_met.Simpson() << endl;
+	num_met.test_adaptative_square();
+
+	//num_met.test_monte_carlo();
 
 	system("pause");
 	return 0;
