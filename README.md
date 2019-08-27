@@ -15,4 +15,4 @@ Atividade 3 e 4
   - DFS, BFS, hiil-climbing e A*
 
 Atividade 5
-  - Descida do Gradiente
+  - Descida do Gradiente (numeric_method.h) - "NumericMethod::gradient_descent_a", "NumericMethod::gradient_descent_b" e "NumericMethod::test_gradient"
