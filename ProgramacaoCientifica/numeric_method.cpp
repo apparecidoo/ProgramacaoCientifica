@@ -1,6 +1,26 @@
 #include "pch.h"
 #include "numeric_method.h"
 
+int NumericMethod::factorial(int n)
+{
+	return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
+}
+
+double NumericMethod::df_dx_generic(std::function<double(double)>f, double x, int degrees)
+{
+	double sum = 0.0;
+	double h = 0.0009;
+	for (int i = 0; i <= degrees; i++)
+	{
+		double signal = pow(-1, i + degrees);
+		double fat = (factorial(degrees) / (factorial(i) * factorial(degrees - i)));
+		double result_f = f(x + (i * h));
+		sum += (signal * (fat * result_f));
+	}
+
+	return sum / pow(h, degrees);
+}
+
 double NumericMethod::df_dx(std::function<double(double)>f, double x)
 {
 	return (f(x + _base_derivate_value) - f(x - _base_derivate_value)) / (2 * _base_derivate_value);
@@ -8,17 +28,17 @@ double NumericMethod::df_dx(std::function<double(double)>f, double x)
 
 double NumericMethod::df_dx_2(std::function<double(double)>f, double x)
 {
-	return 0.0;
+	return df_dx_generic(f, x, 2);
 }
 
 double NumericMethod::df_dx_3(std::function<double(double)>f, double x)
 {
-	return 0.0;
+	return df_dx_generic(f, x, 3);
 }
 
 double NumericMethod::df_dx_4(std::function<double(double)>f, double x)
 {
-	return 0.0;
+	return df_dx_generic(f, x, 4);
 }
 
 NumericMethod::NumericMethod(double interval_a, double interval_b)
@@ -32,10 +52,10 @@ NumericMethod::~NumericMethod()
 }
 
 // f(x) = x², x° = 2
-double NumericMethod::gradient_descent_a(double x_0, double beta, double epsilon)
+double NumericMethod::gradient_descent_a(double x0, double beta, double epsilon)
 {
-	double function_i = pow(x_0, 2); // x²
-	double x_i = x_0;
+	double function_i = pow(x0, 2); // x²
+	double x_i = x0;
 
 	while (function_i != 0 && function_i > epsilon)
 	{
@@ -58,10 +78,10 @@ double NumericMethod::gradient_descent_a(double x_0, double beta, double epsilon
 }
 
 // f(x) = x³ - 2x² + 2, x° = 2
-double NumericMethod::gradient_descent_b(double x_0, double beta, double epsilon)
+double NumericMethod::gradient_descent_b(double x0, double beta, double epsilon)
 {
-	double function_i = pow(x_0, 3) - 2 * pow(x_0, 2) + 2; // x³ - 2x² + 2
-	double x_i = x_0;
+	double function_i = pow(x0, 3) - 2 * pow(x0, 2) + 2; // x³ - 2x² + 2
+	double x_i = x0;
 
 	while (function_i != 0 && function_i > epsilon)
 	{
@@ -157,14 +177,14 @@ double NumericMethod::monte_carlo_class_6_f_2_error(std::function<double(double,
 	return sqrt((f_error_square_result / attempts - pow((f_error_result / attempts), 2)) / attempts);
 }
 
-double NumericMethod::adaptative_square_by_divisions(std::function<double(double)> f, std::function<double(std::function<double(double)>)> numeric_method_func, int divisions)
+double NumericMethod::numeric_square_by_divisions(std::function<double(double)> f, std::function<double(std::function<double(double)>)> numeric_method_func, int divisions)
 {
 	double result = 0.0;
 	double interval_a = _a;
 	double interval_b = _b;
 	int count = 0;
 	double interval = (_b - _a) / divisions;
-	DynamicQueue<double> queue;
+	DynamicQueue<double> queue;	
 
 	while (count < divisions)
 	{
@@ -185,24 +205,21 @@ double NumericMethod::adaptative_square_by_divisions(std::function<double(double
 	return result;
 }
 
-double NumericMethod::adaptative_square_by_error_rate(std::function<double(double)> f, std::function<double(std::function<double(double)>)> numeric_method_func, std::function<double(std::function<double(double)>, int)> numeric_method_error_func, double error)
+double NumericMethod::numeric_square_by_error_rate(std::function<double(double)> f, std::function<double(std::function<double(double)>)> numeric_method_func, std::function<double(std::function<double(double)>, int)> numeric_method_error_func, double error)
 {
 	double result = 0.0;
-	double result_previous = 0.0;
-	double error_numeric_method = error + 1;
-	int divisions = 1;
+	double error_numeric_method = 0.0;
+	int divisions = 0;
 
 	do
 	{
-		result_previous = result;
-		result = adaptative_square_by_divisions(f, numeric_method_func, divisions);
-
-		if (result == result_previous)
-			break;
-
-		error_numeric_method = numeric_method_error_func(f, divisions);
 		divisions++;
+		error_numeric_method = numeric_method_error_func(f, divisions);
 	} while (error_numeric_method > error);
+
+	result = numeric_square_by_divisions(f, numeric_method_func, divisions);
+
+	cout << "Error: " << error_numeric_method << " - Divisions: " << divisions << " - ";
 
 	return result;
 }
@@ -268,17 +285,17 @@ double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f,
 
 double NumericMethod::midpoint_error(std::function<double(double)>f, int divisions)
 {
-	return -pow((_b - _a) / divisions, 3) / 24 * df_dx_2(f, (_b - _a) / 2);
+	return -(pow((_b - _a) / divisions, 3) / 24) * df_dx_2(f, (_b - _a) / 2);
 }
 
 double NumericMethod::trapezoidal_error(std::function<double(double)>f, int divisions)
 {
-	return -pow((_b - _a) / divisions, 3) / 12 * df_dx_2(f, (_b - _a) / 2);
+	return -(pow((_b - _a) / divisions, 3) / 12) * df_dx_2(f, (_b - _a) / 2);
 }
 
 double NumericMethod::simpson_error(std::function<double(double)>f, int divisions)
 {
-	return -pow((_b - _a) / divisions, 5) / 90 * df_dx_4(f, (_b - _a) / 2);
+	return -(pow((_b - _a) / divisions, 5) / 90) * df_dx_4(f, (_b - _a) / 2);
 }
 
 double NumericMethod::monte_carlo_error(std::function<double(double)> f, int attempts)
@@ -361,21 +378,21 @@ void NumericMethod::test_adaptative_square()
 	cout << endl;
 
 	cout << "f(x) = e^x" << endl;
-	cout << "Midpoint: " << adaptative_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), std::bind(&NumericMethod::midpoint_error, this, _1, _2), error_rate) << endl;
-	cout << "Trapezoidal: " << adaptative_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2), error_rate) << endl;
-	cout << "Simpson: " << adaptative_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::simpson, this, _1), std::bind(&NumericMethod::simpson_error, this, _1, _2), error_rate) << endl;
+	cout << "Midpoint: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), std::bind(&NumericMethod::midpoint_error, this, _1, _2), error_rate) << endl;
+	cout << "Trapezoidal: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2), error_rate) << endl;
+	cout << "Simpson: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::simpson, this, _1), std::bind(&NumericMethod::simpson_error, this, _1, _2), error_rate) << endl;
 	cout << endl;
 
 	cout << "f(x) = square(1-x^2)" << endl;
-	cout << "Midpoint: " << adaptative_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), std::bind(&NumericMethod::midpoint_error, this, _1, _2), error_rate) << endl;
-	cout << "Trapezoidal: " << adaptative_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2), error_rate) << endl;
-	cout << "Simpson: " << adaptative_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::simpson, this, _1), std::bind(&NumericMethod::simpson_error, this, _1, _2), error_rate) << endl;
+	cout << "Midpoint: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), std::bind(&NumericMethod::midpoint_error, this, _1, _2), error_rate) << endl;
+	cout << "Trapezoidal: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2), error_rate) << endl;
+	cout << "Simpson: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::simpson, this, _1), std::bind(&NumericMethod::simpson_error, this, _1, _2), error_rate) << endl;
 	cout << endl;
 
 	cout << "f(x) = e^(-x^2)" << endl;
-	cout << "Midpoint: " << adaptative_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), std::bind(&NumericMethod::midpoint_error, this, _1, _2), error_rate) << endl;
-	cout << "Trapezoidal: " << adaptative_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2), error_rate) << endl;
-	cout << "Simpson: " << adaptative_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::simpson, this, _1), std::bind(&NumericMethod::simpson_error, this, _1, _2), error_rate) << endl;
+	cout << "Midpoint: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), std::bind(&NumericMethod::midpoint_error, this, _1, _2), error_rate) << endl;
+	cout << "Trapezoidal: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2), error_rate) << endl;
+	cout << "Simpson: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::simpson, this, _1), std::bind(&NumericMethod::simpson_error, this, _1, _2), error_rate) << endl;
 }
 
 void NumericMethod::test_monte_carlo()
