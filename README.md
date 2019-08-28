@@ -35,8 +35,8 @@ Atividade 6
 Atividade 7
   - Monte Carlo (numeric_method.h)
     - double monte_carlo_class_6_f_2_by_attempts(std::function<double(double,double,double)>f, int attempts);
-	  - double monte_carlo_class_6_f_2_by_error_rate(std::function<double(double, double, double)>f, double error);
-	  - double monte_carlo_class_6_f_2_error(std::function<double(double, double, double)>f, int attempts);
+    - double monte_carlo_class_6_f_2_by_error_rate(std::function<double(double, double, double)>f, double error);
+    - double monte_carlo_class_6_f_2_error(std::function<double(double, double, double)>f, int attempts);
     - double monte_carlo_by_attempts(std::function<double(double)>f, int attempts);
     - double monte_carlo_by_error_rate(std::function<double(double)>f, double error);
     - double monte_carlo_error(std::function<double(double)>f, int attempts);
