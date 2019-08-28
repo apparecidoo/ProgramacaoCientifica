@@ -285,7 +285,7 @@ double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f,
 
 double NumericMethod::midpoint_error(std::function<double(double)>f, int divisions)
 {
-	return -(pow((_b - _a) / divisions, 3) / 24) * df_dx_2(f, (_b - _a) / 2);
+	return pow((_b - _a) / divisions, 3) / 24 * df_dx_2(f, (_b - _a) / 2);
 }
 
 double NumericMethod::trapezoidal_error(std::function<double(double)>f, int divisions)
