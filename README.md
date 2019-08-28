@@ -15,4 +15,28 @@ Atividade 3 e 4
   - DFS, BFS, hiil-climbing e A*
 
 Atividade 5
-  - Descida do Gradiente (numeric_method.h) - "NumericMethod::gradient_descent_a", "NumericMethod::gradient_descent_b" e "NumericMethod::test_gradient"
+  - Descida do Gradiente (numeric_method.h) 
+    - double gradient_descent_a(double x0, double beta, double epsilon);
+    - double gradient_descent_b(double x0, double beta, double epsilon);
+    - void test_gradient();
+    
+Atividade 6
+  - Integração Numérica (numeric_method.h)
+    - double midpoint(std::function<double(double)>f);
+    - double trapezoidal(std::function<double(double)>f);
+    - double simpson(std::function<double(double)>f);
+    - double numeric_square_by_divisions(std::function<double(double)>f, std::function<double(std::function<double(double)>)> numeric_method_func, int divisions);
+    - double numeric_square_by_error_rate(std::function<double(double)>f, std::function<double(std::function<double(double)>)> numeric_method_func, std::function<double(std::function<double(double)>, int)> numeric_method_error_func, double error_rate);
+    - double midpoint_error(std::function<double(double)>f, int divisions);
+    - double trapezoidal_error(std::function<double(double)>f, int divisions);
+    - double simpson_error(std::function<double(double)>f, int divisions);
+    - void test_adaptative_square();
+Atividade 7
+  - Monte Carlo (numeric_method.h)
+    - double monte_carlo_class_6_f_2_by_attempts(std::function<double(double,double,double)>f, int attempts);
+	  - double monte_carlo_class_6_f_2_by_error_rate(std::function<double(double, double, double)>f, double error);
+	  - double monte_carlo_class_6_f_2_error(std::function<double(double, double, double)>f, int attempts);
+    - double monte_carlo_by_attempts(std::function<double(double)>f, int attempts);
+    - double monte_carlo_by_error_rate(std::function<double(double)>f, double error);
+    - double monte_carlo_error(std::function<double(double)>f, int attempts);
+    - void test_monte_carlo();
