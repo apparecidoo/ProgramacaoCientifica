@@ -31,6 +31,7 @@ Atividade 6
     - double trapezoidal_error(std::function<double(double)>f, int divisions);
     - double simpson_error(std::function<double(double)>f, int divisions);
     - void test_adaptative_square();
+    
 Atividade 7
   - Monte Carlo (numeric_method.h)
     - double monte_carlo_class_6_f_2_by_attempts(std::function<double(double,double,double)>f, int attempts);
