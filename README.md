@@ -41,3 +41,9 @@ Atividade 7
     - double monte_carlo_by_error_rate(std::function<double(double)>f, double error);
     - double monte_carlo_error(std::function<double(double)>f, int attempts);
     - void test_monte_carlo();
+    
+Atividade 8
+  - Monte Carlo (numeric_method.h) com MPI (distributed_system.h)
+  
+Atividade 9
+  - Quadratura Numérica (numeric_method.h) com Open MP (distributed_system.h)
