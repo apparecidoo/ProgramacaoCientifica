@@ -112,13 +112,13 @@ double NumericMethod::monte_carlo_class_6_f_2_by_attempts(std::function<double(d
 
 	while (count < attempts)
 	{
-		double x = (rand() % 4000) / 1000.0;
-		double y = (rand() % 4000) / 1000.0;
-		double z = (rand() % 4000) / 1000.0;
+		double x = (rand() % -1000 + 3000) / 1000.0; // (4 ->  1)
+		double y = (rand() % -3000 + 3000) / 1000.0; // (4 -> -3)
+		double z = (rand() % -1000 + 0000) / 1000.0; // (1 -> -1)
 
 		double result_f = f(x, y, z);
 
-		if (result_f <= 1 && x > 1 && y >= -3) {
+		if (result_f <= 1 && x >= 1 && y >= -3) {
 			queue.enqueue(result_f);
 			count++;
 		}
@@ -397,7 +397,7 @@ void NumericMethod::test_adaptative_square()
 
 void NumericMethod::test_monte_carlo()
 {
-	int attempts = 4;
+	int attempts = 10000;
 	double error_rate = 0.05;
 	Equations* eq = new Equations();
 
@@ -406,8 +406,8 @@ void NumericMethod::test_monte_carlo()
 	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_1, eq, _1), attempts) << endl;
 	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_class_6_f_2_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), attempts) << endl;
 
-	cout << "Error rate: " << error_rate << endl;
+	/*cout << "Error rate: " << error_rate << endl;
 	cout << endl;
 	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_error_rate(std::bind(&Equations::class_6_f_1, eq, _1), error_rate) << endl;
-	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_class_6_f_2_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), error_rate) << endl;
+	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_class_6_f_2_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), error_rate) << endl;*/
 }

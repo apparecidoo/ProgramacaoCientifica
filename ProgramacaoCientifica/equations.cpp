@@ -31,5 +31,5 @@ double Equations::class_6_f_1(double x)
 
 double Equations::class_6_f_2(double x, double y, double z)
 {
-	return pow(z, 2) + pow(sqrt(pow(x, 2) + pow(y, 2) - 3), 2); // f(x) = -z² + (square(x²+y²) - 3)²
+	return pow(z, 2) + pow(sqrt(pow(x, 2) + pow(y, 2)) - 3, 2); // f(x) = z² + (square(x²+y²) - 3)²
 }

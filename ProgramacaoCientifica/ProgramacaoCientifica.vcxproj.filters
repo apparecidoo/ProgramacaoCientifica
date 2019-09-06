@@ -60,6 +60,9 @@
     <ClCompile Include="integrate_range.h">
       <Filter>Header Files\entities</Filter>
     </ClCompile>
+    <ClCompile Include="distributed_system.cpp">
+      <Filter>Source Files\algorithms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="custom_exception.h">
@@ -100,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="equations.h">
       <Filter>Header Files\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="distributed_system.h">
+      <Filter>Header Files\algorithms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

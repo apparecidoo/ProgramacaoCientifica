@@ -15,12 +15,17 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/
-x86/
+ProgramacaoCientifica/x64/
+ProgramacaoCientifica/x86/
+x64/[Dd]ebug/
+x86/[Dd]ebug/
+x64/[Rr]elease/
+x86/[Rr]eleases/
 bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+
 
 # Visual Studio 2015 cache/options directory
 .vs/

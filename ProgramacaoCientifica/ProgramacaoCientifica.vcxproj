@@ -106,10 +106,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <OpenMPSupport>true</OpenMPSupport>
+      <AdditionalIncludeDirectories>$(SolutionDir)\sdks\MPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\sdks\MPI\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>msmpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="custom_exception.h" />
+    <ClInclude Include="distributed_system.h" />
     <ClInclude Include="equations.h" />
     <ClInclude Include="linked_list.h" />
     <ClInclude Include="numeric_method.h" />
@@ -167,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="custom_exception.cpp" />
+    <ClCompile Include="distributed_system.cpp" />
     <ClCompile Include="equations.cpp" />
     <ClCompile Include="integrate_range.h" />
     <ClCompile Include="numeric_method.cpp" />

@@ -12,27 +12,24 @@
 #include "puzzle.h"
 #include "numeric_method.h"
 #include "equations.h"
+#include "distributed_system.h"
 
 using namespace std;
 using namespace std::placeholders;
 
 int main()
 {
-	Equations* eq = new Equations();
-	NumericMethod num_met = NumericMethod(0, 1);
+	/*Equations* eq = new Equations();
+	NumericMethod num_met = NumericMethod(0, 1);*/
 	
 	//num_met.test_gradient();
 
-	num_met.test_adaptative_square();
+	//num_met.test_adaptative_square();
 
 	//num_met.test_monte_carlo();
 
-	system("pause");
-	return 0;
+	DistributedSystem().mpi_hello_world();
+
+	/*system("pause");
+	return 0;*/
 }
-
-
-
-
-
-
