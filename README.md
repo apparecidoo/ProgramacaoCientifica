@@ -43,7 +43,7 @@ Atividade 7
     - void test_monte_carlo();
     
 Atividade 8
-  - Monte Carlo (numeric_method.h) com MPI (distributed_system.h)
+  - Monte Carlo (numeric_method.h) com MPI (distributed_system.h) - Pré-requisito: MPI for windows
   
 Atividade 9
   - Quadratura Numérica (numeric_method.h) com Open MP (distributed_system.h)
