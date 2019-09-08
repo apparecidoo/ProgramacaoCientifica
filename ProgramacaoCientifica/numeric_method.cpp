@@ -41,10 +41,8 @@ double NumericMethod::df_dx_4(std::function<double(double)>f, double x)
 	return df_dx_generic(f, x, 4);
 }
 
-NumericMethod::NumericMethod(double interval_a, double interval_b)
+NumericMethod::NumericMethod()
 {
-	this->_a = interval_a;
-	this->_b = interval_b;
 }
 
 NumericMethod::~NumericMethod()
@@ -103,18 +101,22 @@ double NumericMethod::gradient_descent_b(double x0, double beta, double epsilon)
 	return x_i;
 }
 
-double NumericMethod::monte_carlo_volume_error(std::function<double(double, double, double)> f, int attempts)
+double NumericMethod::monte_carlo_volume_error(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, int attempts)
 {
-	srand(time(NULL));
 	double f_error_square_result = 0.0;
 	double f_error_result = 0.0;
 	int count = 0;
+	random_device rd;
+	mt19937 eng(rd());
+	uniform_real_distribution<double> distr_x(ranges[0].a, ranges[0].b);
+	uniform_real_distribution<double> distr_y(ranges[1].a, ranges[1].b);
+	uniform_real_distribution<double> distr_z(ranges[2].a, ranges[2].b);
 
 	while (count < attempts)
 	{
-		double x = (rand() % 4000) / 1000.0;
-		double y = (rand() % 4000) / 1000.0;
-		double z = (rand() % 4000) / 1000.0;
+		double x = distr_x(eng);
+		double y = distr_y(eng);
+		double z = distr_z(eng);
 		double f_result = f(x, y, z);
 
 		f_error_square_result += pow(f_result, 2);
@@ -126,29 +128,26 @@ double NumericMethod::monte_carlo_volume_error(std::function<double(double, doub
 	return sqrt((f_error_square_result / attempts - pow((f_error_result / attempts), 2)) / attempts);
 }
 
-double NumericMethod::numeric_square_by_divisions(std::function<double(double)> f, std::function<double(std::function<double(double)>)> numeric_method_func, int divisions)
+double NumericMethod::numeric_square_by_divisions(std::function<double(double)> f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, int divisions)
 {
 	double result = 0.0;
-	double interval_a = _a;
-	double interval_b = _b;
+	double interval_a = range.a;
+	double interval_b = range.b;
 	int count = 0;
-	double interval = (_b - _a) / divisions;
+	double interval = (interval_b - interval_a) / divisions;
 
 	while (count < divisions)
 	{
-		_b = _a + interval;
-		result += numeric_method_func(f);
-		_a += interval;
+		interval_b = interval_a + interval;
+		result += numeric_method_func(f, range);
+		interval_a += interval;
 		count++;
 	}
-
-	_a = interval_a;
-	_b = interval_b;
 
 	return result;
 }
 
-double NumericMethod::numeric_square_by_error_rate(std::function<double(double)> f, std::function<double(std::function<double(double)>)> numeric_method_func, std::function<double(std::function<double(double)>, int)> numeric_method_error_func, double error)
+double NumericMethod::numeric_square_by_error_rate(std::function<double(double)> f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, std::function<double(std::function<double(double)>, IntegrateRange<double>, int)> numeric_method_error_func, double error)
 {
 	double result = 0.0;
 	double error_numeric_method = 0.0;
@@ -157,32 +156,32 @@ double NumericMethod::numeric_square_by_error_rate(std::function<double(double)>
 	do
 	{
 		divisions++;
-		error_numeric_method = numeric_method_error_func(f, divisions);
+		error_numeric_method = numeric_method_error_func(f, range, divisions);
 	} while (error_numeric_method > error);
 
-	result = numeric_square_by_divisions(f, numeric_method_func, divisions);
+	result = numeric_square_by_divisions(f, range, numeric_method_func, divisions);
 
 	cout << "Error: " << error_numeric_method << " - Divisions: " << divisions << " - ";
 
 	return result;
 }
 
-double NumericMethod::midpoint(std::function<double(double)>f)
+double NumericMethod::midpoint(std::function<double(double)>f, IntegrateRange<double> range)
 {
-	return (_b - _a) * f((_a + _b) / 2);
+	return (range.b - range.a) * f((range.a + range.b) / 2);
 }
 
-double NumericMethod::trapezoidal(std::function<double(double)>f)
+double NumericMethod::trapezoidal(std::function<double(double)>f, IntegrateRange<double> range)
 {
-	return (_b - _a) * (f(_a) + f(_b)) / 2;
+	return (range.b - range.a) * (f(range.a) + f(range.b)) / 2;
 }
 
-double NumericMethod::simpson(std::function<double(double)>f)
+double NumericMethod::simpson(std::function<double(double)>f, IntegrateRange<double> range)
 {
-	return (_b - _a) * (f(_a) + (4 * (f((_a + _b) / 2))) + f(_b)) / 6;
+	return (range.b - range.a) * (f(range.a) + (4 * (f((range.a + range.b) / 2))) + f(range.b)) / 6;
 }
 
-double NumericMethod::monte_carlo_by_attempts(std::function<double(double)> f, int attempts)
+double NumericMethod::monte_carlo_by_attempts(std::function<double(double)> f, IntegrateRange<double> range, int attempts)
 {
 	srand(time(NULL));
 	int count = 0;
@@ -204,7 +203,7 @@ double NumericMethod::monte_carlo_by_attempts(std::function<double(double)> f, i
 	return result / attempts;
 }
 
-double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f, double error)
+double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f, IntegrateRange<double> range, double error)
 {
 	double result = 0.0;
 	double result_previous = 0.0;
@@ -214,12 +213,12 @@ double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f,
 	do
 	{
 		result_previous = result;
-		result = monte_carlo_by_attempts(f, attempts);
+		result = monte_carlo_by_attempts(f, range, attempts);
 
 		if (result == result_previous)
 			break;
 
-		error_numeric_method = monte_carlo_error(f, attempts);
+		error_numeric_method = monte_carlo_error(f, range, attempts);
 		attempts++;
 	} while (error_numeric_method > error);
 
@@ -273,38 +272,41 @@ double NumericMethod::monte_carlo_volume_error_rate(std::function<double(double,
 		if (result == result_previous)
 			break;
 
-		error_numeric_method = monte_carlo_volume_error(f, attempts);
+		error_numeric_method = monte_carlo_volume_error(f, ranges, attempts);
 		attempts++;
 	} while (error_numeric_method > error);
 
 	return result;
 }
 
-double NumericMethod::midpoint_error(std::function<double(double)>f, int divisions)
+double NumericMethod::midpoint_error(std::function<double(double)>f, IntegrateRange<double> range, int divisions)
 {
-	return pow((_b - _a) / divisions, 3) / 24 * df_dx_2(f, (_b - _a) / 2);
+	return pow((range.b - range.a) / divisions, 3) / 24 * df_dx_2(f, (range.b - range.a) / 2);
 }
 
-double NumericMethod::trapezoidal_error(std::function<double(double)>f, int divisions)
+double NumericMethod::trapezoidal_error(std::function<double(double)>f, IntegrateRange<double> range, int divisions)
 {
-	return -(pow((_b - _a) / divisions, 3) / 12) * df_dx_2(f, (_b - _a) / 2);
+	return -(pow((range.b - range.a) / divisions, 3) / 12) * df_dx_2(f, (range.b - range.a) / 2);
 }
 
-double NumericMethod::simpson_error(std::function<double(double)>f, int divisions)
+double NumericMethod::simpson_error(std::function<double(double)>f, IntegrateRange<double> range, int divisions)
 {
-	return -(pow((_b - _a) / divisions, 5) / 90) * df_dx_4(f, (_b - _a) / 2);
+	return -(pow((range.b - range.a) / divisions, 5) / 90) * df_dx_4(f, (range.b - range.a) / 2);
 }
 
-double NumericMethod::monte_carlo_error(std::function<double(double)> f, int attempts)
+double NumericMethod::monte_carlo_error(std::function<double(double)> f, IntegrateRange<double> range, int attempts)
 {
-	srand(time(NULL));
+	random_device rd;
+	mt19937 eng(rd());
+	uniform_real_distribution<double> distr_x(range.a, range.b);
+
 	double f_error_square_result = 0.0;
 	double f_error_result = 0.0;
 	int count = 0;
 
 	while (count < attempts)
 	{
-		double x = (rand() % 100) / 100.0;
+		double x = distr_x(eng);
 		double f_result = f(x);
 
 		f_error_square_result += pow(f_result, 2);
@@ -346,6 +348,7 @@ void NumericMethod::test_adaptative_square()
 	int divisions = 4;
 	double error_rate = 0.05;
 	Equations* eq = new Equations();
+	IntegrateRange<double> range_default = IntegrateRange<double>(0, 1);
 
 	/*cout << "Midpoint: " << midpoint(std::bind(&Equations::class_4_f_1, eq, _1)) << endl;
 	cout << "Trapezoidal: " << trapezoidal(std::bind(&Equations::class_4_f_1, eq, _1)) << endl;
@@ -375,21 +378,21 @@ void NumericMethod::test_adaptative_square()
 	cout << endl;
 
 	cout << "f(x) = e^x" << endl;
-	cout << "Midpoint: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), std::bind(&NumericMethod::midpoint_error, this, _1, _2), error_rate) << endl;
-	cout << "Trapezoidal: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2), error_rate) << endl;
-	cout << "Simpson: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::simpson, this, _1), std::bind(&NumericMethod::simpson_error, this, _1, _2), error_rate) << endl;
+	cout << "Midpoint: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), range_default, std::bind(&NumericMethod::midpoint, this, _1, _2), std::bind(&NumericMethod::midpoint_error, this, _1, _2, _3), error_rate) << endl;
+	cout << "Trapezoidal: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), range_default, std::bind(&NumericMethod::trapezoidal, this, _1, _2), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2, _3), error_rate) << endl;
+	cout << "Simpson: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_1, eq, _1), range_default, std::bind(&NumericMethod::simpson, this, _1, _2), std::bind(&NumericMethod::simpson_error, this, _1, _2, _3), error_rate) << endl;
 	cout << endl;
 
 	cout << "f(x) = square(1-x^2)" << endl;
-	cout << "Midpoint: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), std::bind(&NumericMethod::midpoint_error, this, _1, _2), error_rate) << endl;
-	cout << "Trapezoidal: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2), error_rate) << endl;
-	cout << "Simpson: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::simpson, this, _1), std::bind(&NumericMethod::simpson_error, this, _1, _2), error_rate) << endl;
+	cout << "Midpoint: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), range_default, std::bind(&NumericMethod::midpoint, this, _1, _2), std::bind(&NumericMethod::midpoint_error, this, _1, _2, _3), error_rate) << endl;
+	cout << "Trapezoidal: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), range_default, std::bind(&NumericMethod::trapezoidal, this, _1, _2), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2, _3), error_rate) << endl;
+	cout << "Simpson: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_2, eq, _1), range_default, std::bind(&NumericMethod::simpson, this, _1, _2), std::bind(&NumericMethod::simpson_error, this, _1, _2, _3), error_rate) << endl;
 	cout << endl;
 
 	cout << "f(x) = e^(-x^2)" << endl;
-	cout << "Midpoint: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), std::bind(&NumericMethod::midpoint_error, this, _1, _2), error_rate) << endl;
-	cout << "Trapezoidal: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2), error_rate) << endl;
-	cout << "Simpson: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::simpson, this, _1), std::bind(&NumericMethod::simpson_error, this, _1, _2), error_rate) << endl;
+	cout << "Midpoint: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), range_default, std::bind(&NumericMethod::midpoint, this, _1, _2), std::bind(&NumericMethod::midpoint_error, this, _1, _2, _3), error_rate) << endl;
+	cout << "Trapezoidal: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), range_default, std::bind(&NumericMethod::trapezoidal, this, _1, _2), std::bind(&NumericMethod::trapezoidal_error, this, _1, _2, _3), error_rate) << endl;
+	cout << "Simpson: " << numeric_square_by_error_rate(std::bind(&Equations::class_5_f_3, eq, _1), range_default, std::bind(&NumericMethod::simpson, this, _1, _2), std::bind(&NumericMethod::simpson_error, this, _1, _2, _3), error_rate) << endl;
 }
 
 void NumericMethod::test_monte_carlo()
@@ -397,18 +400,20 @@ void NumericMethod::test_monte_carlo()
 	int attempts = 10000;
 	double error_rate = 0.05;
 	Equations* eq = new Equations();
+	IntegrateRange<double> range_default = IntegrateRange<double>(0, 1);
 	IntegrateRange<double> ranges[3];
 	ranges[0] = IntegrateRange<double>(1.0, 4.0);
 	ranges[1] = IntegrateRange<double>(-3.0, 4.0);
 	ranges[2] = IntegrateRange<double>(-1.0, 1.0);
 
+
 	cout << "Attempts: " << attempts << endl;
 	cout << endl;
-	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_1, eq, _1), attempts) << endl;
+	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_1, eq, _1), range_default, attempts) << endl;
 	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), ranges, attempts) << endl;
 
 	cout << "Error rate: " << error_rate << endl;
 	cout << endl;
-	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_error_rate(std::bind(&Equations::class_6_f_1, eq, _1), error_rate) << endl;
+	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_error_rate(std::bind(&Equations::class_6_f_1, eq, _1), range_default, error_rate) << endl;
 	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_error_rate(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), ranges, error_rate) << endl;
 }
