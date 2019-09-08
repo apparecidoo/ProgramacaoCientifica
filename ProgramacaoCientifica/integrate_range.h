@@ -13,6 +13,7 @@ public:
 	T a, b;
 
 	IntegrateRange(T a, T b);
+	IntegrateRange();
 	IntegrateRange<T>* generate_range_by_division(); // return two ranges
 };
 
@@ -21,6 +22,11 @@ IntegrateRange<T>::IntegrateRange(T a, T b)
 {
 	this->a = a;
 	this->b = b;
+}
+
+template<class T>
+IntegrateRange<T>::IntegrateRange()
+{
 }
 
 template<class T>

@@ -103,58 +103,7 @@ double NumericMethod::gradient_descent_b(double x0, double beta, double epsilon)
 	return x_i;
 }
 
-double NumericMethod::monte_carlo_class_6_f_2_by_attempts(std::function<double(double, double, double)> f, int attempts)
-{
-	srand(time(NULL));
-	int count = 0;
-	double result = 0.0;
-	DynamicQueue<double> queue;
-
-	while (count < attempts)
-	{
-		double x = (rand() % -1000 + 3000) / 1000.0; // (4 ->  1)
-		double y = (rand() % -3000 + 3000) / 1000.0; // (4 -> -3)
-		double z = (rand() % -1000 + 0000) / 1000.0; // (1 -> -1)
-
-		double result_f = f(x, y, z);
-
-		if (result_f <= 1 && x >= 1 && y >= -3) {
-			queue.enqueue(result_f);
-			count++;
-		}
-	}
-
-	while (!queue.is_empty())
-	{
-		result += queue.dequeue();
-	}
-
-	return result / attempts;
-}
-
-double NumericMethod::monte_carlo_class_6_f_2_by_error_rate(std::function<double(double, double, double)> f, double error)
-{
-	double result = 0.0;
-	double result_previous = 0.0;
-	double error_numeric_method = error + 1;
-	int attempts = 1;
-
-	do
-	{
-		result_previous = result;
-		result = monte_carlo_class_6_f_2_by_attempts(f, attempts);
-
-		if (result == result_previous)
-			break;
-
-		error_numeric_method = monte_carlo_class_6_f_2_error(f, attempts);
-		attempts++;
-	} while (error_numeric_method > error);
-
-	return result;
-}
-
-double NumericMethod::monte_carlo_class_6_f_2_error(std::function<double(double, double, double)> f, int attempts)
+double NumericMethod::monte_carlo_volume_error(std::function<double(double, double, double)> f, int attempts)
 {
 	srand(time(NULL));
 	double f_error_square_result = 0.0;
@@ -184,19 +133,13 @@ double NumericMethod::numeric_square_by_divisions(std::function<double(double)> 
 	double interval_b = _b;
 	int count = 0;
 	double interval = (_b - _a) / divisions;
-	DynamicQueue<double> queue;	
 
 	while (count < divisions)
 	{
 		_b = _a + interval;
-		queue.enqueue(numeric_method_func(f));
+		result += numeric_method_func(f);
 		_a += interval;
 		count++;
-	}
-
-	while (!queue.is_empty())
-	{
-		result += queue.dequeue();
 	}
 
 	_a = interval_a;
@@ -277,6 +220,60 @@ double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f,
 			break;
 
 		error_numeric_method = monte_carlo_error(f, attempts);
+		attempts++;
+	} while (error_numeric_method > error);
+
+	return result;
+}
+
+double NumericMethod::monte_carlo_volume_by_attempts(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, int attempts)
+{
+	random_device rd;
+	mt19937 eng(rd());
+	uniform_real_distribution<double> distr_x(ranges[0].a, ranges[0].b);
+	uniform_real_distribution<double> distr_y(ranges[1].a, ranges[1].b);
+	uniform_real_distribution<double> distr_z(ranges[2].a, ranges[2].b);
+
+	int count = 0;
+	double result = 0.0;
+	double delta_x = ranges[0].b - ranges[0].a;
+	double delta_y = ranges[1].b - ranges[1].a;
+	double delta_z = ranges[2].b - ranges[2].a;
+	double base_volume = delta_x * delta_y * delta_z;
+
+	while (count < attempts)
+	{
+		double x = distr_x(eng);
+		double y = distr_y(eng);
+		double z = distr_z(eng);
+
+		double result_f = f(x, y, z);
+
+		if (result_f <= 1 && x >= 1 && y >= -3) {
+			result += result_f;
+			count++;
+		}
+	}
+
+	return base_volume * result / attempts;
+}
+
+double NumericMethod::monte_carlo_volume_error_rate(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, double error)
+{
+	double result = 0.0;
+	double result_previous = 0.0;
+	double error_numeric_method = error + 1;
+	int attempts = 1;
+
+	do
+	{
+		result_previous = result;
+		result = monte_carlo_volume_by_attempts(f, ranges, attempts);
+
+		if (result == result_previous)
+			break;
+
+		error_numeric_method = monte_carlo_volume_error(f, attempts);
 		attempts++;
 	} while (error_numeric_method > error);
 
@@ -400,14 +397,18 @@ void NumericMethod::test_monte_carlo()
 	int attempts = 10000;
 	double error_rate = 0.05;
 	Equations* eq = new Equations();
+	IntegrateRange<double> ranges[3];
+	ranges[0] = IntegrateRange<double>(1.0, 4.0);
+	ranges[1] = IntegrateRange<double>(-3.0, 4.0);
+	ranges[2] = IntegrateRange<double>(-1.0, 1.0);
 
 	cout << "Attempts: " << attempts << endl;
 	cout << endl;
 	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_1, eq, _1), attempts) << endl;
-	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_class_6_f_2_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), attempts) << endl;
+	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), ranges, attempts) << endl;
 
-	/*cout << "Error rate: " << error_rate << endl;
+	cout << "Error rate: " << error_rate << endl;
 	cout << endl;
 	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_error_rate(std::bind(&Equations::class_6_f_1, eq, _1), error_rate) << endl;
-	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_class_6_f_2_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), error_rate) << endl;*/
+	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_error_rate(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), ranges, error_rate) << endl;
 }

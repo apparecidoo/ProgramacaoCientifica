@@ -19,17 +19,17 @@ using namespace std::placeholders;
 
 int main()
 {
-	/*Equations* eq = new Equations();
-	NumericMethod num_met = NumericMethod(0, 1);*/
+	Equations* eq = new Equations();
+	NumericMethod num_met = NumericMethod(0, 1);
 	
 	//num_met.test_gradient();
 
 	//num_met.test_adaptative_square();
 
-	//num_met.test_monte_carlo();
+	num_met.test_monte_carlo();
 
-	DistributedSystem().mpi_hello_world();
+	//DistributedSystem().mpi_hello_world();
 
-	/*system("pause");
-	return 0;*/
+	system("pause");
+	return 0;
 }
