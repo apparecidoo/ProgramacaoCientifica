@@ -2,6 +2,7 @@
 #include <functional>
 #include <time.h>
 #include <random>
+#include <mpi.h>
 
 #include "queue_dynamic.h"
 #include "equations.h"
@@ -41,8 +42,10 @@ public:
 	double numeric_square_by_divisions(std::function<double(double)>f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, int divisions); // calculate numeric square for equation of one variable, passing the method and number of divisions on integrate region
 	double numeric_square_by_error_rate(std::function<double(double)>f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, std::function<double(std::function<double(double)>, IntegrateRange<double>, int)> numeric_method_error_func, double error_rate); // calculate numeric square for equation of one variable, passing the method, method error and error rate maximum
 	double monte_carlo_by_attempts(std::function<double(double)>f, IntegrateRange<double> range, int attempts); // calculate monte carlo for equation of one variable and receiving divisions number
+	void monte_carlo_by_attempts_distributed(std::function<double(double)>f, IntegrateRange<double> range, int attempts); // calculate monte carlo for equation of one variable and receiving divisions number, using MPI
 	double monte_carlo_by_error_rate(std::function<double(double)>f, IntegrateRange<double> range, double error); // calculate monte carlo for equation of one variable and maximum error rate
 	double monte_carlo_volume_by_attempts(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, int attempts); // calculate monte carlo for equation of three variable and receiving attempts number
+	void monte_carlo_volume_by_attempts_distributed(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, int attempts); // calculate monte carlo for equation of three variable and receiving attempts number, using MPI
 	double monte_carlo_volume_error_rate(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, double error); // calculate monte carlo for equation of three variable and error rate maximum
 
 	double midpoint_error(std::function<double(double)>f, IntegrateRange<double> range, int divisions); // calculate midpoint error for equation of one variable and receiving divisions number
@@ -54,6 +57,7 @@ public:
 	void test_gradient(); // test for gradient
 	void test_adaptative_square(); // test for adaptative square
 	void test_monte_carlo(); // test for monte carlo
+	void test_monte_carlo_distributed(); // test for monte carlo using MPI
 };
 
 #endif

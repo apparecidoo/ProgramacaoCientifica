@@ -24,12 +24,14 @@ int main()
 	
 	//num_met.test_gradient();
 
-	num_met.test_adaptative_square();
+	//num_met.test_adaptative_square();
 
 	//num_met.test_monte_carlo();
 
+	num_met.test_monte_carlo_distributed();
+
 	//DistributedSystem().mpi_hello_world();
 
-	system("pause");
+	//system("pause");
 	return 0;
 }
