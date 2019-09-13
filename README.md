@@ -1,6 +1,9 @@
 # Programação Cientifica
 >> Mestrado - Programação Cientifica
 
+Pré-requisitos
+  - Instalação do MPI - Link: https://docs.microsoft.com/en-us/message-passing-interface/microsoft-mpi
+
 Atividade 1 
   - Fila estática (queue.h)
   - Pilha estática (stack.h)
@@ -34,16 +37,19 @@ Atividade 6
     
 Atividade 7
   - Monte Carlo (numeric_method.h)
-    - double monte_carlo_class_6_f_2_by_attempts(std::function<double(double,double,double)>f, int attempts);
-    - double monte_carlo_class_6_f_2_by_error_rate(std::function<double(double, double, double)>f, double error);
-    - double monte_carlo_class_6_f_2_error(std::function<double(double, double, double)>f, int attempts);
-    - double monte_carlo_by_attempts(std::function<double(double)>f, int attempts);
-    - double monte_carlo_by_error_rate(std::function<double(double)>f, double error);
-    - double monte_carlo_error(std::function<double(double)>f, int attempts);
-    - void test_monte_carlo();
+  - double monte_carlo_by_attempts(std::function<double(double)>f, IntegrateRange<double> range, int attempts);
+  - double monte_carlo_by_error_rate(std::function<double(double)>f, IntegrateRange<double> range, double error);
+  - double monte_carlo_volume_by_attempts(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, int attempts);
+  - double monte_carlo_volume_error_rate(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, double error);
+  - double monte_carlo_error(std::function<double(double)>f, IntegrateRange<double> range, int attempts);
+  - double monte_carlo_volume_error(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, int attempts);
+  - void test_monte_carlo();
     
 Atividade 8
-  - Monte Carlo (numeric_method.h) com MPI (distributed_system.h) - Pré-requisito: MPI for windows
+  - Monte Carlo com MPI (numeric_method.h)
+  - void monte_carlo_by_attempts_distributed(std::function<double(double)>f, IntegrateRange<double> range, int attempts);
+  - void monte_carlo_volume_by_attempts_distributed(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, int attempts);
+  - void test_monte_carlo_distributed();
   
 Atividade 9
   - Quadratura Numérica (numeric_method.h) com Open MP (distributed_system.h)
