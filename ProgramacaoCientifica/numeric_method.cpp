@@ -221,21 +221,22 @@ void NumericMethod::monte_carlo_by_attempts_distributed(std::function<double(dou
 	if (id == master)
 	{
 		cout << "MONTE CARLO - Master process: The number of processes available is " << number_process << endl;
+		cout << "MONTE CARLO - Attempts: " << attempts << endl;
 		wtime_start = MPI_Wtime(); // Record the starting time
 	}
 
 	ierr = MPI_Bcast(&attempts, 1, MPI_INT, master, MPI_COMM_WORLD); // The master process broadcasts, and the other processes receive, the number of intervals attempts
 
 	// Coding
-	cout << "MONTE CARLO - Process " << id << endl;
-	cout << "  Start Range " << attempts / number_process * id << endl;
+	/*cout << "MONTE CARLO - Process " << id << endl;
+	cout << "  Start Range " << attempts / number_process * id << endl;*/
 	for (i = (attempts / number_process * id); i < (attempts / number_process * (id + 1)); i++)
 	{
 		double x = distr_x(eng);
 		result_part += f(x);
 	}
-	cout << "  End Range " << attempts / number_process * (id + 1) << endl;
-	cout << "  Estimate " << result_part << endl;
+	/*cout << "  End Range " << attempts / number_process * (id + 1) << endl;
+	cout << "  Estimate " << result_part << endl;*/
 
 	ierr = MPI_Reduce(&result_part, &result, 1, MPI_DOUBLE, MPI_SUM, master, MPI_COMM_WORLD); // Each process sends its local result result_part to the MASTER process, to be added to the global result.
 
@@ -243,16 +244,15 @@ void NumericMethod::monte_carlo_by_attempts_distributed(std::function<double(dou
 	if (id == master)
 	{
 		//MPI_Barrier(MPI_COMM_WORLD);
-		cout << "MONTE CARLO - Master process: " << endl;
-		cout << "Integral value is " << result / attempts << endl;
-		cout << endl << "Wall clock elapsed seconds: " << MPI_Wtime() - wtime_start << endl;
+		cout << "MONTE CARLO - Master process: Integral value is " << result / attempts << endl;
+		cout << "MONTE CARLO - Wall clock elapsed seconds: " << MPI_Wtime() - wtime_start << endl;
 	}
 
 	ierr = MPI_Finalize(); // Terminate MPI
 
-	if (id == master) {
+	/*if (id == master) {
 		cout << endl << "MONTE CARLO - Master process: Normal end of execution." << endl;
-	}
+	}*/
 }
 
 double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f, IntegrateRange<double> range, double error)
@@ -337,15 +337,15 @@ void NumericMethod::monte_carlo_volume_by_attempts_distributed(std::function<dou
 	if (id == master)
 	{
 		cout << "MONTE CARLO - Master process: The number of processes available is " << number_process << endl;
-		cout << "Attempts: " << attempts << endl;
+		cout << "MONTE CARLO - Attempts: " << attempts << endl;
 		wtime_start = MPI_Wtime(); // Record the starting time
 	}
 
 	ierr = MPI_Bcast(&attempts, 1, MPI_INT, master, MPI_COMM_WORLD); // The master process broadcasts, and the other processes receive, the number of intervals attempts
 
 	// Coding
-	cout << "MONTE CARLO - Process " << id << endl;
-	cout << "  Start Range " << attempts / number_process * id << endl;
+	/*cout << "MONTE CARLO - Process " << id << endl;
+	cout << "  Start Range " << attempts / number_process * id << endl;*/
 	for (i = (attempts / number_process * id); i < (attempts / number_process * (id + 1)); )
 	{
 		double x = distr_x(eng);
@@ -359,8 +359,8 @@ void NumericMethod::monte_carlo_volume_by_attempts_distributed(std::function<dou
 			i++;
 		}
 	}
-	cout << "  End Range " << attempts / number_process * (id + 1) << endl;
-	cout << "  Estimate " << result_part << endl;
+	/*cout << "  End Range " << attempts / number_process * (id + 1) << endl;
+	cout << "  Estimate " << result_part << endl;*/
 
 	ierr = MPI_Reduce(&result_part, &result, 1, MPI_DOUBLE, MPI_SUM, master, MPI_COMM_WORLD); // Each process sends its local result result_part to the MASTER process, to be added to the global result.
 
@@ -368,16 +368,15 @@ void NumericMethod::monte_carlo_volume_by_attempts_distributed(std::function<dou
 	if (id == master)
 	{
 		//MPI_Barrier(MPI_COMM_WORLD);
-		cout << "MONTE CARLO - Master process: " << endl;
-		cout << "Volume of Integral value is " << base_volume * result / attempts << endl;
-		cout << endl << "Wall clock elapsed seconds: " << MPI_Wtime() - wtime_start << endl;
+		cout << "MONTE CARLO - Master process: Volume of Integral value is " << base_volume * result / attempts << endl;
+		cout << "MONTE CARLO - Wall clock elapsed seconds: " << MPI_Wtime() - wtime_start << endl;
 	}
 
 	ierr = MPI_Finalize(); // Terminate MPI
 
-	if (id == master) {
+	/*if (id == master) {
 		cout << endl << "MONTE CARLO - Master process: Normal end of execution." << endl;
-	}
+	}*/
 }
 
 double NumericMethod::monte_carlo_volume_error_rate(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, double error)
@@ -520,7 +519,7 @@ void NumericMethod::test_adaptative_square()
 
 void NumericMethod::test_monte_carlo()
 {
-	int attempts = 10000;
+	int attempts = 10;
 	double error_rate = 0.05;
 	Equations* eq = new Equations();
 	IntegrateRange<double> range_default = IntegrateRange<double>(0, 1);
@@ -530,15 +529,37 @@ void NumericMethod::test_monte_carlo()
 	ranges[2] = IntegrateRange<double>(-1.0, 1.0);
 
 
-	cout << "Attempts: " << attempts << endl;
 	cout << endl;
+	cout << "Attempts: " << attempts << endl;
 	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_1, eq, _1), range_default, attempts) << endl;
-	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), ranges, attempts) << endl;
+	cout << "f(x) = square(x + square(x)): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1), range_default, attempts) << endl;
+	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_by_attempts(std::bind(&Equations::class_6_f_3, eq, _1, _2, _3), ranges, attempts) << endl;
 
-	cout << "Error rate: " << error_rate << endl;
+	cout << endl;
+	attempts = 100;
+	cout << "Attempts: " << attempts << endl;
+	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_1, eq, _1), range_default, attempts) << endl;
+	cout << "f(x) = square(x + square(x)): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1), range_default, attempts) << endl;
+	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_by_attempts(std::bind(&Equations::class_6_f_3, eq, _1, _2, _3), ranges, attempts) << endl;
+
+	cout << endl;
+	attempts = 1000;
+	cout << "Attempts: " << attempts << endl;
+	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_1, eq, _1), range_default, attempts) << endl;
+	cout << "f(x) = square(x + square(x)): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1), range_default, attempts) << endl;
+	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_by_attempts(std::bind(&Equations::class_6_f_3, eq, _1, _2, _3), ranges, attempts) << endl;
+
+	cout << endl;
+	attempts = 10000;
+	cout << "Attempts: " << attempts << endl;
+	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_1, eq, _1), range_default, attempts) << endl;
+	cout << "f(x) = square(x + square(x)): " << monte_carlo_by_attempts(std::bind(&Equations::class_6_f_2, eq, _1), range_default, attempts) << endl;
+	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_by_attempts(std::bind(&Equations::class_6_f_3, eq, _1, _2, _3), ranges, attempts) << endl;
+
+	/*cout << "Error rate: " << error_rate << endl;
 	cout << endl;
 	cout << "f(x) = 4 / (1 + x^2): " << monte_carlo_by_error_rate(std::bind(&Equations::class_6_f_1, eq, _1), range_default, error_rate) << endl;
-	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_error_rate(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), ranges, error_rate) << endl;
+	cout << "f(x) = z^2 + (square(x^2 + y^2) - 3)^2: " << monte_carlo_volume_error_rate(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), ranges, error_rate) << endl;*/
 }
 
 void NumericMethod::test_monte_carlo_distributed()
@@ -552,5 +573,6 @@ void NumericMethod::test_monte_carlo_distributed()
 	ranges[2] = IntegrateRange<double>(-1.0, 1.0);
 
 	//monte_carlo_by_attempts_distributed(std::bind(&Equations::class_6_f_1, eq, _1), range_default, attempts);
-	monte_carlo_volume_by_attempts_distributed(std::bind(&Equations::class_6_f_2, eq, _1, _2, _3), ranges, attempts);
+	//monte_carlo_by_attempts_distributed(std::bind(&Equations::class_6_f_2, eq, _1), range_default, attempts);
+	monte_carlo_volume_by_attempts_distributed(std::bind(&Equations::class_6_f_3, eq, _1, _2, _3), ranges, attempts);
 }

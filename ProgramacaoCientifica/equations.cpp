@@ -29,7 +29,12 @@ double Equations::class_6_f_1(double x)
 	return 4 / (1 + pow(x, 2));  // f(x) = 4 / (1 + x²)
 }
 
-double Equations::class_6_f_2(double x, double y, double z)
+double Equations::class_6_f_2(double x)
+{
+	return sqrt(x + sqrt(x));  // f(x) = sqrt(x + sqrt(x))
+}
+
+double Equations::class_6_f_3(double x, double y, double z)
 {
 	return pow(z, 2) + pow(sqrt(pow(x, 2) + pow(y, 2)) - 3, 2); // f(x) = z² + (square(x²+y²) - 3)²
 }

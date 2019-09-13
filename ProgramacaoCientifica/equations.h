@@ -16,7 +16,8 @@ public:
 	double class_5_f_2(double x); // f(x) = raiz(1-x²)
 	double class_5_f_3(double x); // f(x) = e^-x²
 	double class_6_f_1(double x); // f(x) = 4 / (1 + x²)
-	double class_6_f_2(double x, double y, double z); // f(x) = -z² + (square(x²+y²) - 3)²
+	double class_6_f_2(double x); // f(x) = sqrt(x + sqrt(x))
+	double class_6_f_3(double x, double y, double z); // f(x) = -z² + (square(x²+y²) - 3)²
 };
 
 #endif
