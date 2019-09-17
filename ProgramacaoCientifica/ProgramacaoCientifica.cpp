@@ -22,16 +22,19 @@ int main()
 	Equations* eq = new Equations();
 	NumericMethod num_met = NumericMethod();
 	
+	//DistributedSystem().mpi_hello_world();
+
 	//num_met.test_gradient();
 
 	//num_met.test_adaptative_square();
 
 	//num_met.test_monte_carlo();
 
-	num_met.test_monte_carlo_distributed();
+	//num_met.test_monte_carlo_distributed();
 
-	//DistributedSystem().mpi_hello_world();
+	num_met.test_numeric_square_distributed();
+	
+	system("pause");
 
-	//system("pause");
 	return 0;
 }

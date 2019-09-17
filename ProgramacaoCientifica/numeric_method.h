@@ -3,6 +3,10 @@
 #include <time.h>
 #include <random>
 #include <mpi.h>
+#include <omp.h>
+#include <chrono>
+#include <ctime>
+#include <ratio>
 
 #include "queue_dynamic.h"
 #include "equations.h"
@@ -12,8 +16,11 @@
 #ifndef NUMERIC_METHOD_H
 #define NUMERIC_METHOD_H
 
+#define IS_PARALLEL 1
+
 using namespace std;
 using namespace std::placeholders;
+using namespace std::chrono;
 
 class NumericMethod {
 
@@ -42,11 +49,14 @@ public:
 	double numeric_square_by_divisions(std::function<double(double)>f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, int divisions); // calculate numeric square for equation of one variable, passing the method and number of divisions on integrate region
 	double numeric_square_by_error_rate(std::function<double(double)>f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, std::function<double(std::function<double(double)>, IntegrateRange<double>, int)> numeric_method_error_func, double error_rate); // calculate numeric square for equation of one variable, passing the method, method error and error rate maximum
 	double monte_carlo_by_attempts(std::function<double(double)>f, IntegrateRange<double> range, int attempts); // calculate monte carlo for equation of one variable and receiving divisions number
-	void monte_carlo_by_attempts_distributed(std::function<double(double)>f, IntegrateRange<double> range, int attempts); // calculate monte carlo for equation of one variable and receiving divisions number, using MPI
 	double monte_carlo_by_error_rate(std::function<double(double)>f, IntegrateRange<double> range, double error); // calculate monte carlo for equation of one variable and maximum error rate
 	double monte_carlo_volume_by_attempts(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, int attempts); // calculate monte carlo for equation of three variable and receiving attempts number
-	void monte_carlo_volume_by_attempts_distributed(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, int attempts); // calculate monte carlo for equation of three variable and receiving attempts number, using MPI
 	double monte_carlo_volume_error_rate(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, double error); // calculate monte carlo for equation of three variable and error rate maximum
+	
+	void monte_carlo_volume_by_attempts_distributed(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, int attempts); // calculate monte carlo for equation of three variable and receiving attempts number, using MPI
+	void monte_carlo_by_attempts_distributed(std::function<double(double)>f, IntegrateRange<double> range, int attempts); // calculate monte carlo for equation of one variable and receiving divisions number, using MPI
+	double numeric_square_by_divisions_distributed(std::function<double(double)>f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, int divisions); // calculate numeric square for equation of one variable, passing the method and number of divisions on integrate region, using OPEN MP
+	double numeric_square_by_error_rate_distributed(std::function<double(double)>f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, std::function<double(std::function<double(double)>, IntegrateRange<double>, int)> numeric_method_error_func, double error_rate); // calculate numeric square for equation of one variable, passing the method, method error and error rate maximum, using OPEN MP
 
 	double midpoint_error(std::function<double(double)>f, IntegrateRange<double> range, int divisions); // calculate midpoint error for equation of one variable and receiving divisions number
 	double trapezoidal_error(std::function<double(double)>f, IntegrateRange<double> range, int divisions); // calculate trapezoidal error for equation of one variable and receiving divisions number
@@ -55,9 +65,10 @@ public:
 	double monte_carlo_volume_error(std::function<double(double, double, double)>f, IntegrateRange<double>* ranges, int attempts); // calculate monte carlo error for equation of three variable and receiving attempts number
 
 	void test_gradient(); // test for gradient
-	void test_adaptative_square(); // test for adaptative square
+	void test_numeric_square(); // test for numeric square
 	void test_monte_carlo(); // test for monte carlo
 	void test_monte_carlo_distributed(); // test for monte carlo using MPI
+	void test_numeric_square_distributed(); // test for numeric square using OPEN MP
 };
 
 #endif

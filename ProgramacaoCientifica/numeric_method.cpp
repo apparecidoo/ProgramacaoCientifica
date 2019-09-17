@@ -130,6 +130,7 @@ double NumericMethod::monte_carlo_volume_error(std::function<double(double, doub
 
 double NumericMethod::numeric_square_by_divisions(std::function<double(double)> f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, int divisions)
 {
+	auto start = std::chrono::high_resolution_clock::now();
 	double result = 0.0;
 	double interval_a = range.a;
 	double interval_b = range.b;
@@ -139,15 +140,17 @@ double NumericMethod::numeric_square_by_divisions(std::function<double(double)> 
 	while (count < divisions)
 	{
 		interval_b = interval_a + interval;
-		result += numeric_method_func(f, range);
+		result += numeric_method_func(f, IntegrateRange<double>(interval_a, interval_b));
 		interval_a += interval;
 		count++;
 	}
 
+	cout << "Executed in Time in seconds: " << duration_cast<duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << endl;
+
 	return result;
 }
 
-double NumericMethod::numeric_square_by_error_rate(std::function<double(double)> f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, std::function<double(std::function<double(double)>, IntegrateRange<double>, int)> numeric_method_error_func, double error)
+double NumericMethod::numeric_square_by_error_rate(std::function<double(double)> f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, std::function<double(std::function<double(double)>, IntegrateRange<double>, int)> numeric_method_error_func, double error_rate)
 {
 	double result = 0.0;
 	double error_numeric_method = 0.0;
@@ -157,7 +160,7 @@ double NumericMethod::numeric_square_by_error_rate(std::function<double(double)>
 	{
 		divisions++;
 		error_numeric_method = numeric_method_error_func(f, range, divisions);
-	} while (error_numeric_method > error);
+	} while (error_numeric_method > error_rate);
 
 	result = numeric_square_by_divisions(f, range, numeric_method_func, divisions);
 
@@ -253,6 +256,58 @@ void NumericMethod::monte_carlo_by_attempts_distributed(std::function<double(dou
 	/*if (id == master) {
 		cout << endl << "MONTE CARLO - Master process: Normal end of execution." << endl;
 	}*/
+}
+
+double NumericMethod::numeric_square_by_divisions_distributed(std::function<double(double)> f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, int divisions)
+{
+	int nprocs = omp_get_num_procs();
+	omp_set_num_threads(nprocs);
+	auto start = std::chrono::high_resolution_clock::now();
+
+	double result = 0.0;
+	double interval_a = 0.0;
+	double interval_b = 0.0;
+	int count = 0;
+
+#if IS_PARALLEL == 1
+#pragma omp parallel for reduction(+:result) private(interval_a, interval_b)
+#endif
+	for (count = 0; count < divisions; count++)
+	{
+		interval_a = (count * (range.b - range.a) / divisions) + range.a;
+		interval_b = ((count + 1) * (range.b - range.a) / divisions) + range.a;
+
+		result += numeric_method_func(f, IntegrateRange<double>(interval_a, interval_b));
+	}
+
+	cout << "Executed in Time in seconds: " << duration_cast<duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << endl;
+
+	return result;
+}
+
+double NumericMethod::numeric_square_by_error_rate_distributed(std::function<double(double)> f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, std::function<double(std::function<double(double)>, IntegrateRange<double>, int)> numeric_method_error_func, double error_rate)
+{
+	int nprocs = omp_get_num_procs();
+	omp_set_num_threads(nprocs);
+	double start_time = omp_get_wtime();
+
+	double result = 0.0;
+	double error_numeric_method = error_rate + 1.0;
+	int divisions = 0;
+
+//#if IS_PARALLEL == 1
+//#pragma omp parallel for reduction(+:result) private(error_numeric_method) shared(divisions)
+//#endif
+	for (divisions = 0; error_numeric_method > error_rate; divisions++)
+	{
+		error_numeric_method = numeric_method_error_func(f, range, divisions);
+	}
+
+	result = numeric_square_by_divisions(f, range, numeric_method_func, divisions);
+	
+	cout << "Error: " << error_numeric_method << " - Divisions: " << divisions << " - ";
+
+	return result;
 }
 
 double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f, IntegrateRange<double> range, double error)
@@ -465,36 +520,12 @@ void NumericMethod::test_gradient()
 	}
 }
 
-void NumericMethod::test_adaptative_square()
+void NumericMethod::test_numeric_square()
 {
 	int divisions = 4;
 	double error_rate = 0.05;
 	Equations* eq = new Equations();
 	IntegrateRange<double> range_default = IntegrateRange<double>(0, 1);
-
-	/*cout << "Midpoint: " << midpoint(std::bind(&Equations::class_4_f_1, eq, _1)) << endl;
-	cout << "Trapezoidal: " << trapezoidal(std::bind(&Equations::class_4_f_1, eq, _1)) << endl;
-	cout << "Simpson: " << simpson(std::bind(&Equations::class_4_f_1, eq, _1)) << endl;*/
-
-	/*cout << "Divisions: " << divisions << endl;
-	cout << endl;
-
-	cout << "f(x) = e^x" << endl;
-	cout << "Midpoint: " << adaptative_square_by_attempts(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), divisions) << endl;
-	cout << "Trapezoidal: " << adaptative_square_by_attempts(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), divisions) << endl;
-	cout << "Simpson: " << adaptative_square_by_attempts(std::bind(&Equations::class_5_f_1, eq, _1), std::bind(&NumericMethod::simpson, this, _1), divisions) << endl;
-	cout << endl;
-
-	cout << "f(x) = square(1-x^2)" << endl;
-	cout << "Midpoint: " << adaptative_square_by_attempts(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), divisions) << endl;
-	cout << "Trapezoidal: " << adaptative_square_by_attempts(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), divisions) << endl;
-	cout << "Simpson: " << adaptative_square_by_attempts(std::bind(&Equations::class_5_f_2, eq, _1), std::bind(&NumericMethod::simpson, this, _1), divisions) << endl;
-	cout << endl;
-
-	cout << "f(x) = e^(-x^2)" << endl;
-	cout << "Midpoint: " << adaptative_square_by_attempts(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::midpoint, this, _1), divisions) << endl;
-	cout << "Trapezoidal: " << adaptative_square_by_attempts(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::trapezoidal, this, _1), divisions) << endl;
-	cout << "Simpson: " << adaptative_square_by_attempts(std::bind(&Equations::class_5_f_3, eq, _1), std::bind(&NumericMethod::simpson, this, _1), divisions) << endl;*/
 
 	cout << "Error rate: " << error_rate << endl;
 	cout << endl;
@@ -575,4 +606,40 @@ void NumericMethod::test_monte_carlo_distributed()
 	//monte_carlo_by_attempts_distributed(std::bind(&Equations::class_6_f_1, eq, _1), range_default, attempts);
 	//monte_carlo_by_attempts_distributed(std::bind(&Equations::class_6_f_2, eq, _1), range_default, attempts);
 	monte_carlo_volume_by_attempts_distributed(std::bind(&Equations::class_6_f_3, eq, _1, _2, _3), ranges, attempts);
+}
+
+void NumericMethod::test_numeric_square_distributed()
+{
+	int divisions = 1000000;
+	Equations* eq = new Equations();
+	IntegrateRange<double> range_default = IntegrateRange<double>(0, 1);
+
+	cout << "Divisions: " << divisions << endl;
+	cout << endl;
+
+	cout << "f(x) = e^x" << endl;
+	cout << "Midpoint: " << numeric_square_by_divisions(std::bind(&Equations::class_5_f_1, eq, _1), range_default, std::bind(&NumericMethod::midpoint, this, _1, _2), divisions) << endl;
+	cout << "Midpoint DIST: " << numeric_square_by_divisions_distributed(std::bind(&Equations::class_5_f_1, eq, _1), range_default, std::bind(&NumericMethod::midpoint, this, _1, _2), divisions) << endl;
+	cout << "Trapezoidal: " << numeric_square_by_divisions(std::bind(&Equations::class_5_f_1, eq, _1), range_default, std::bind(&NumericMethod::trapezoidal, this, _1, _2), divisions) << endl;
+	cout << "Trapezoidal DIST: " << numeric_square_by_divisions_distributed(std::bind(&Equations::class_5_f_1, eq, _1), range_default, std::bind(&NumericMethod::trapezoidal, this, _1, _2), divisions) << endl;
+	cout << "Simpson: " << numeric_square_by_divisions(std::bind(&Equations::class_5_f_1, eq, _1), range_default, std::bind(&NumericMethod::simpson, this, _1, _2), divisions) << endl;
+	cout << "Simpson DIST: " << numeric_square_by_divisions_distributed(std::bind(&Equations::class_5_f_1, eq, _1), range_default, std::bind(&NumericMethod::simpson, this, _1, _2), divisions) << endl;
+	cout << endl;
+
+	cout << "f(x) = square(1-x^2)" << endl;
+	cout << "Midpoint: " << numeric_square_by_divisions(std::bind(&Equations::class_5_f_2, eq, _1), range_default, std::bind(&NumericMethod::midpoint, this, _1, _2), divisions) << endl;
+	cout << "Midpoint DIST: " << numeric_square_by_divisions_distributed(std::bind(&Equations::class_5_f_2, eq, _1), range_default, std::bind(&NumericMethod::midpoint, this, _1, _2), divisions) << endl;
+	cout << "Trapezoidal: " << numeric_square_by_divisions(std::bind(&Equations::class_5_f_2, eq, _1), range_default, std::bind(&NumericMethod::trapezoidal, this, _1, _2), divisions) << endl;
+	cout << "Trapezoidal DIST: " << numeric_square_by_divisions_distributed(std::bind(&Equations::class_5_f_2, eq, _1), range_default, std::bind(&NumericMethod::trapezoidal, this, _1, _2), divisions) << endl;
+	cout << "Simpson: " << numeric_square_by_divisions(std::bind(&Equations::class_5_f_2, eq, _1), range_default, std::bind(&NumericMethod::simpson, this, _1, _2), divisions) << endl;
+	cout << "Simpson DIST: " << numeric_square_by_divisions_distributed(std::bind(&Equations::class_5_f_2, eq, _1), range_default, std::bind(&NumericMethod::simpson, this, _1, _2), divisions) << endl;
+	cout << endl;
+
+	cout << "f(x) = e^(-x^2)" << endl;
+	cout << "Midpoint: " << numeric_square_by_divisions(std::bind(&Equations::class_5_f_3, eq, _1), range_default, std::bind(&NumericMethod::midpoint, this, _1, _2), divisions) << endl;
+	cout << "Midpoint DIST: " << numeric_square_by_divisions_distributed(std::bind(&Equations::class_5_f_3, eq, _1), range_default, std::bind(&NumericMethod::midpoint, this, _1, _2), divisions) << endl;
+	cout << "Trapezoidal: " << numeric_square_by_divisions(std::bind(&Equations::class_5_f_3, eq, _1), range_default, std::bind(&NumericMethod::trapezoidal, this, _1, _2), divisions) << endl;
+	cout << "Trapezoidal DIST: " << numeric_square_by_divisions_distributed(std::bind(&Equations::class_5_f_3, eq, _1), range_default, std::bind(&NumericMethod::trapezoidal, this, _1, _2), divisions) << endl;
+	cout << "Simpson: " << numeric_square_by_divisions(std::bind(&Equations::class_5_f_3, eq, _1), range_default, std::bind(&NumericMethod::simpson, this, _1, _2), divisions) << endl;
+	cout << "Simpson DIST: " << numeric_square_by_divisions_distributed(std::bind(&Equations::class_5_f_3, eq, _1), range_default, std::bind(&NumericMethod::simpson, this, _1, _2), divisions) << endl;
 }
