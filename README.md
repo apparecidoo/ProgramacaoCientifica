@@ -1,5 +1,6 @@
 # Programação Cientifica
 >> Mestrado - Programação Cientifica
+>> Relatórios estão disponiveis na pasta "reports"
 
 Pré-requisitos
   - Instalação do MPI - Link: https://docs.microsoft.com/en-us/message-passing-interface/microsoft-mpi
@@ -55,5 +56,3 @@ Atividade 9
   - Quadratura Numérica (numeric_method.h) com Open MP
     - double numeric_square_by_divisions_distributed(std::function<double(double)>f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, int divisions);
     - double numeric_square_by_error_rate_distributed(std::function<double(double)>f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, std::function<double(std::function<double(double)>, IntegrateRange<double>, int)> numeric_method_error_func, double error_rate);
-
->> Relatórios estão disponiveis na pasta "reports" <<
