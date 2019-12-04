@@ -1,6 +1,7 @@
 # Programação Cientifica
 >> Mestrado - Programação Cientifica
->> Relatórios estão disponiveis na pasta "reports"
+
+- Relatórios estão disponiveis na pasta "reports"
 
 Pré-requisitos
   - Instalação do MPI - Link: https://docs.microsoft.com/en-us/message-passing-interface/microsoft-mpi
