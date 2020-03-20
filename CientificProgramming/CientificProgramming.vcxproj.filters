@@ -45,9 +45,6 @@
     <ClCompile Include="stack.cpp">
       <Filter>Source Files\algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="ProgramacaoCientifica.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="puzzle_type.h">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -62,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="distributed_system.cpp">
       <Filter>Source Files\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="CientificProgramming.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
