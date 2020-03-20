@@ -186,6 +186,7 @@ double NumericMethod::simpson(std::function<double(double)>f, IntegrateRange<dou
 
 double NumericMethod::monte_carlo_by_attempts(std::function<double(double)> f, IntegrateRange<double> range, int attempts)
 {
+	auto start = std::chrono::high_resolution_clock::now();
 	random_device rd;
 	mt19937 eng(rd());
 	uniform_real_distribution<double> distr_x(range.a, range.b);
@@ -199,63 +200,69 @@ double NumericMethod::monte_carlo_by_attempts(std::function<double(double)> f, I
 		count++;
 	}
 
+	cout << "Executed in Time in seconds: " << duration_cast<duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << endl;
+
 	return result / attempts;
 }
 
-void NumericMethod::monte_carlo_by_attempts_distributed(std::function<double(double)> f, IntegrateRange<double> range, int attempts)
+double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f, IntegrateRange<double> range, double error)
 {
-	int i;
-	int id;
-	int ierr;
-	int master = 0;
-	int number_process;
-	double wtime_start;
+	auto start = std::chrono::high_resolution_clock::now();
 	double result = 0.0;
-	double result_part = 0.0;
+	double result_previous = 0.0;
+	double error_numeric_method = error + 1;
+	int attempts = 1;
 
+	do
+	{
+		result_previous = result;
+		result = monte_carlo_by_attempts(f, range, attempts);
+
+		if (result == result_previous)
+			break;
+
+		error_numeric_method = monte_carlo_error(f, range, attempts);
+		attempts++;
+	} while (error_numeric_method > error);
+
+	cout << "Executed in Time in seconds: " << duration_cast<duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << endl;
+
+	return result;
+}
+
+double NumericMethod::monte_carlo_volume_by_attempts(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, int attempts)
+{
+	auto start = std::chrono::high_resolution_clock::now();
 	random_device rd;
 	mt19937 eng(rd());
-	uniform_real_distribution<double> distr_x(range.a, range.b);
+	uniform_real_distribution<double> distr_x(ranges[0].a, ranges[0].b);
+	uniform_real_distribution<double> distr_y(ranges[1].a, ranges[1].b);
+	uniform_real_distribution<double> distr_z(ranges[2].a, ranges[2].b);
 
-	ierr = MPI_Init(NULL, NULL); // Initialize MPI.
-	ierr = MPI_Comm_size(MPI_COMM_WORLD, &number_process); // Get the number of processes
-	ierr = MPI_Comm_rank(MPI_COMM_WORLD, &id); // Determine this processes's rank
+	int count = 0;
+	double result = 0.0;
+	double delta_x = ranges[0].b - ranges[0].a;
+	double delta_y = ranges[1].b - ranges[1].a;
+	double delta_z = ranges[2].b - ranges[2].a;
+	double base_volume = delta_x * delta_y * delta_z;
 
-	if (id == master)
-	{
-		cout << "MONTE CARLO - Master process: The number of processes available is " << number_process << endl;
-		cout << "MONTE CARLO - Attempts: " << attempts << endl;
-		wtime_start = MPI_Wtime(); // Record the starting time
-	}
-
-	ierr = MPI_Bcast(&attempts, 1, MPI_INT, master, MPI_COMM_WORLD); // The master process broadcasts, and the other processes receive, the number of intervals attempts
-
-	// Coding
-	/*cout << "MONTE CARLO - Process " << id << endl;
-	cout << "  Start Range " << attempts / number_process * id << endl;*/
-	for (i = (attempts / number_process * id); i < (attempts / number_process * (id + 1)); i++)
+	while (count < attempts)
 	{
 		double x = distr_x(eng);
-		result_part += f(x);
-	}
-	/*cout << "  End Range " << attempts / number_process * (id + 1) << endl;
-	cout << "  Estimate " << result_part << endl;*/
+		double y = distr_y(eng);
+		double z = distr_z(eng);
 
-	ierr = MPI_Reduce(&result_part, &result, 1, MPI_DOUBLE, MPI_SUM, master, MPI_COMM_WORLD); // Each process sends its local result result_part to the MASTER process, to be added to the global result.
+		double result_f = f(x, y, z);
 
-	// The master process scales the sum and reports the results.
-	if (id == master)
-	{
-		//MPI_Barrier(MPI_COMM_WORLD);
-		cout << "MONTE CARLO - Master process: Integral value is " << result / attempts << endl;
-		cout << "MONTE CARLO - Wall clock elapsed seconds: " << MPI_Wtime() - wtime_start << endl;
+		if (result_f <= 1 && x >= 1 && y >= -3) {
+			result += result_f;
+			count++;
+		}
 	}
 
-	ierr = MPI_Finalize(); // Terminate MPI
+	cout << "Executed in Time in seconds: " << duration_cast<duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << endl;
 
-	/*if (id == master) {
-		cout << endl << "MONTE CARLO - Master process: Normal end of execution." << endl;
-	}*/
+	return base_volume * result / attempts;
 }
 
 double NumericMethod::numeric_square_by_divisions_distributed(std::function<double(double)> f, IntegrateRange<double> range, std::function<double(std::function<double(double)>, IntegrateRange<double>)> numeric_method_func, int divisions)
@@ -310,68 +317,70 @@ double NumericMethod::numeric_square_by_error_rate_distributed(std::function<dou
 	return result;
 }
 
-double NumericMethod::monte_carlo_by_error_rate(std::function<double(double)> f, IntegrateRange<double> range, double error)
+void NumericMethod::monte_carlo_by_attempts_distributed(std::function<double(double)> f, IntegrateRange<double> range, int attempts)
 {
-	double result = 0.0;
-	double result_previous = 0.0;
-	double error_numeric_method = error + 1;
-	int attempts = 1;
-
-	do
-	{
-		result_previous = result;
-		result = monte_carlo_by_attempts(f, range, attempts);
-
-		if (result == result_previous)
-			break;
-
-		error_numeric_method = monte_carlo_error(f, range, attempts);
-		attempts++;
-	} while (error_numeric_method > error);
-
-	return result;
-}
-
-double NumericMethod::monte_carlo_volume_by_attempts(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, int attempts)
-{
-	random_device rd;
-	mt19937 eng(rd());
-	uniform_real_distribution<double> distr_x(ranges[0].a, ranges[0].b);
-	uniform_real_distribution<double> distr_y(ranges[1].a, ranges[1].b);
-	uniform_real_distribution<double> distr_z(ranges[2].a, ranges[2].b);
-
-	int count = 0;
-	double result = 0.0;
-	double delta_x = ranges[0].b - ranges[0].a;
-	double delta_y = ranges[1].b - ranges[1].a;
-	double delta_z = ranges[2].b - ranges[2].a;
-	double base_volume = delta_x * delta_y * delta_z;
-
-	while (count < attempts)
-	{
-		double x = distr_x(eng);
-		double y = distr_y(eng);
-		double z = distr_z(eng);
-
-		double result_f = f(x, y, z);
-
-		if (result_f <= 1 && x >= 1 && y >= -3) {
-			result += result_f;
-			count++;
-		}
-	}
-
-	return base_volume * result / attempts;
-}
-
-void NumericMethod::monte_carlo_volume_by_attempts_distributed(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, int attempts)
-{
+	auto start = std::chrono::high_resolution_clock::now();
 	int i;
 	int id;
 	int ierr;
 	int master = 0;
 	int number_process;
-	double wtime_start;
+	double result = 0.0;
+	double result_part = 0.0;
+
+	random_device rd;
+	mt19937 eng(rd());
+	uniform_real_distribution<double> distr_x(range.a, range.b);
+
+	ierr = MPI_Init(NULL, NULL); // Initialize MPI.
+	ierr = MPI_Comm_size(MPI_COMM_WORLD, &number_process); // Get the number of processes
+	ierr = MPI_Comm_rank(MPI_COMM_WORLD, &id); // Determine this processes's rank
+
+	if (id == master)
+	{
+		cout << "MONTE CARLO - Master process: The number of processes available is " << number_process << endl;
+		cout << "MONTE CARLO - Attempts: " << attempts << endl;
+		start = std::chrono::high_resolution_clock::now();
+	}
+
+	ierr = MPI_Bcast(&attempts, 1, MPI_INT, master, MPI_COMM_WORLD); // The master process broadcasts, and the other processes receive, the number of intervals attempts
+
+	// Coding
+	/*cout << "MONTE CARLO - Process " << id << endl;
+	cout << "  Start Range " << attempts / number_process * id << endl;*/
+	for (i = (attempts / number_process * id); i < (attempts / number_process * (id + 1)); i++)
+	{
+		double x = distr_x(eng);
+		result_part += f(x);
+	}
+	/*cout << "  End Range " << attempts / number_process * (id + 1) << endl;
+	cout << "  Estimate " << result_part << endl;*/
+
+	ierr = MPI_Reduce(&result_part, &result, 1, MPI_DOUBLE, MPI_SUM, master, MPI_COMM_WORLD); // Each process sends its local result result_part to the MASTER process, to be added to the global result.
+
+	// The master process scales the sum and reports the results.
+	if (id == master)
+	{
+		//MPI_Barrier(MPI_COMM_WORLD);
+		cout << "MONTE CARLO - Master process: Integral value is " << result / attempts << endl;
+		cout << "MONTE CARLO - Wall clock elapsed seconds: " << duration_cast<duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << endl;
+	}
+
+	ierr = MPI_Finalize(); // Terminate MPI
+
+	/*if (id == master) {
+		cout << endl << "MONTE CARLO - Master process: Normal end of execution." << endl;
+	}*/
+}
+
+void NumericMethod::monte_carlo_volume_by_attempts_distributed(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, int attempts)
+{
+	auto start = std::chrono::high_resolution_clock::now();
+	int i;
+	int id;
+	int ierr;
+	int master = 0;
+	int number_process;
 	double result = 0.0;
 	double result_part = 0.0;
 
@@ -393,7 +402,7 @@ void NumericMethod::monte_carlo_volume_by_attempts_distributed(std::function<dou
 	{
 		cout << "MONTE CARLO - Master process: The number of processes available is " << number_process << endl;
 		cout << "MONTE CARLO - Attempts: " << attempts << endl;
-		wtime_start = MPI_Wtime(); // Record the starting time
+		start = std::chrono::high_resolution_clock::now();
 	}
 
 	ierr = MPI_Bcast(&attempts, 1, MPI_INT, master, MPI_COMM_WORLD); // The master process broadcasts, and the other processes receive, the number of intervals attempts
@@ -424,7 +433,7 @@ void NumericMethod::monte_carlo_volume_by_attempts_distributed(std::function<dou
 	{
 		//MPI_Barrier(MPI_COMM_WORLD);
 		cout << "MONTE CARLO - Master process: Volume of Integral value is " << base_volume * result / attempts << endl;
-		cout << "MONTE CARLO - Wall clock elapsed seconds: " << MPI_Wtime() - wtime_start << endl;
+		cout << "MONTE CARLO - Wall clock elapsed seconds: " << duration_cast<duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << endl;
 	}
 
 	ierr = MPI_Finalize(); // Terminate MPI
@@ -432,28 +441,6 @@ void NumericMethod::monte_carlo_volume_by_attempts_distributed(std::function<dou
 	/*if (id == master) {
 		cout << endl << "MONTE CARLO - Master process: Normal end of execution." << endl;
 	}*/
-}
-
-double NumericMethod::monte_carlo_volume_error_rate(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, double error)
-{
-	double result = 0.0;
-	double result_previous = 0.0;
-	double error_numeric_method = error + 1;
-	int attempts = 1;
-
-	do
-	{
-		result_previous = result;
-		result = monte_carlo_volume_by_attempts(f, ranges, attempts);
-
-		if (result == result_previous)
-			break;
-
-		error_numeric_method = monte_carlo_volume_error(f, ranges, attempts);
-		attempts++;
-	} while (error_numeric_method > error);
-
-	return result;
 }
 
 double NumericMethod::midpoint_error(std::function<double(double)>f, IntegrateRange<double> range, int divisions)
@@ -493,6 +480,28 @@ double NumericMethod::monte_carlo_error(std::function<double(double)> f, Integra
 	}
 
 	return sqrt((f_error_square_result / attempts - pow((f_error_result / attempts), 2)) / attempts);
+}
+
+double NumericMethod::monte_carlo_volume_error_rate(std::function<double(double, double, double)> f, IntegrateRange<double>* ranges, double error)
+{
+	double result = 0.0;
+	double result_previous = 0.0;
+	double error_numeric_method = error + 1;
+	int attempts = 1;
+
+	do
+	{
+		result_previous = result;
+		result = monte_carlo_volume_by_attempts(f, ranges, attempts);
+
+		if (result == result_previous)
+			break;
+
+		error_numeric_method = monte_carlo_volume_error(f, ranges, attempts);
+		attempts++;
+	} while (error_numeric_method > error);
+
+	return result;
 }
 
 void NumericMethod::test_gradient()
